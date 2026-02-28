@@ -1,0 +1,1540 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=0.7, maximum-scale=0.7, user-scalable=yes">
+<title>होली 2026 - धमाकेदार इफेक्ट्स वाला पेज</title>
+
+<!-- गूगल फॉन्ट्स - हिंदी और इंग्लिश के लिए -->
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800&family=Tiro+Devanagari+Hindi&family=Pacifico&family=Great+Vibes&family=Comforter+Brush&family=Kaushan+Script&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+<!-- एड स्क्रिप्ट -->
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-xxxxxxxxxxxxxxxx" crossorigin="anonymous"></script>
+
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { 
+    height: 100%; 
+    background: #fff2e0; 
+    font-family: 'Baloo 2', 'Tiro Devanagari Hindi', sans-serif; 
+    overflow: hidden; 
+    line-height: 1.5; 
+    font-size: 16px;
+}
+
+/* ===== डेस्कटॉप के लिए - 70% जूम ===== */
+@media (min-width: 769px) {
+    html {
+        font-size: 14px;
+    }
+    body {
+        zoom: 0.7;
+        -moz-transform: scale(0.7);
+        -moz-transform-origin: 0 0;
+    }
+}
+
+/* ===== मोबाइल के लिए - 70% जूम (30% कम) ===== */
+@media (max-width: 768px) {
+    html {
+        font-size: 11px;
+    }
+    body {
+        zoom: 0.7;
+        -moz-transform: scale(0.7);
+        -moz-transform-origin: 0 0;
+    }
+}
+
+/* ===== पर्दा (कर्टेन) - पहली स्क्रीन ===== */
+#curtain { 
+    position: fixed; 
+    inset: 0; 
+    z-index: 10000; 
+    display: flex; 
+    transition: opacity 0.3s ease;
+}
+.curtain-panel { 
+    width: 50%; 
+    height: 100%; 
+    background: linear-gradient(145deg, #ff416c, #ff9b4d, #4da8ff); 
+    background-size: 200% 200%; 
+    transition: transform 0.3s cubic-bezier(0.86, 0, 0.07, 1); 
+    box-shadow: 0 0 30px rgba(255, 100, 100, 0.6); 
+}
+.curtain-panel.left { border-right: 5px solid #fff5b0; }
+.curtain-panel.right { border-left: 5px solid #fff5b0; }
+#curtain-center { 
+    position: absolute; 
+    inset: 0; 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    text-align: center; 
+    color: white; 
+    cursor: pointer; 
+    z-index: 10001; 
+    transition: opacity 0.3s ease;
+}
+.magic-card { 
+    background: rgba(255, 245, 200, 0.25); 
+    backdrop-filter: blur(15px); 
+    padding: 4rem 5rem; 
+    border-radius: 60px; 
+    animation: gentlePulse 2.2s infinite ease-in-out; 
+    border: 5px solid rgba(255, 255, 180, 0.7); 
+    box-shadow: 0 30px 50px rgba(0, 0, 0, 0.4); 
+    max-width: 95%; 
+}
+.magic-card h1 {
+    font-size: 4rem !important;
+    margin-bottom: 1rem;
+}
+.magic-card p {
+    font-size: 3rem !important;
+}
+.magic-card div {
+    font-size: 5rem !important;
+}
+@keyframes gentlePulse { 
+    0%,100%{ transform: scale(1); } 
+    50%{ transform: scale(1.03); } 
+}
+.open-left { transform: translateX(-100%); }
+.open-right { transform: translateX(100%); }
+
+/* ===== मुख्य साइट - पूरी स्क्रीन में ===== */
+#mainSite { 
+    min-height: 100vh; 
+    width: 100%; 
+    max-width: 1400px; 
+    margin: 0 auto; 
+    padding: 1rem 1rem; 
+    position: relative; 
+    z-index: 10; 
+    opacity: 0; 
+    transition: opacity 1s ease; 
+    overflow-y: auto; 
+    height: 100%; 
+    scroll-behavior: smooth; 
+}
+body.site-visible { overflow-y: auto; }
+body.site-visible #mainSite { opacity: 1; }
+
+/* ===== एड कंटेनर ===== */
+.ad-container {
+    width: 100%;
+    margin: 3rem 0;
+    padding: 2rem;
+    background: linear-gradient(145deg, #f0f0f0, #ffffff);
+    border-radius: 60px;
+    border: 2px dashed #ff6b6b;
+    text-align: center;
+    min-height: 100px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.ad-container ins {
+    display: block;
+    width: 100%;
+}
+
+/* ===== फ्लोटिंग व्हाट्सएप शेयर बटन - शेयर सेक्शन के साथ ===== */
+.whatsapp-share-container {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    z-index: 100000;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 15px;
+}
+
+.floating-whatsapp {
+    background: #25D366;
+    color: white;
+    font-size: 2.2rem;
+    padding: 1.2rem 2.5rem;
+    border-radius: 70px;
+    border: none;
+    border-bottom: 5px solid #128C7E;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    box-shadow: 0 15px 25px rgba(0,0,0,0.3);
+    animation: floatButton 3s infinite ease-in-out;
+}
+@keyframes floatButton {
+    0%,100%{ transform: translateY(0); }
+    50%{ transform: translateY(-12px); }
+}
+.floating-whatsapp i {
+    font-size: 3rem;
+}
+
+.whatsapp-name-box {
+    background: white;
+    border-radius: 70px;
+    padding: 1rem 2rem;
+    border: 5px solid #25D366;
+    box-shadow: 0 8px 0 #128C7E;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    max-width: 350px;
+}
+.whatsapp-name-box input {
+    border: none;
+    outline: none;
+    font-size: 1.8rem;
+    padding: 0.8rem;
+    width: 200px;
+    font-family: 'Baloo 2', sans-serif;
+}
+.whatsapp-name-box button {
+    background: #25D366;
+    color: white;
+    border: none;
+    border-radius: 60px;
+    padding: 1rem 2rem;
+    font-size: 1.8rem;
+    cursor: pointer;
+    border-bottom: 4px solid #128C7E;
+    white-space: nowrap;
+    transition: all 0.2s ease;
+}
+.whatsapp-name-box button:hover {
+    transform: scale(1.05);
+}
+
+@media (max-width: 768px) {
+    .whatsapp-share-container {
+        bottom: 15px;
+        right: 15px;
+    }
+    .floating-whatsapp {
+        font-size: 1.8rem;
+        padding: 1rem 2rem;
+    }
+    .whatsapp-name-box {
+        padding: 0.8rem 1.5rem;
+    }
+    .whatsapp-name-box input {
+        width: 140px;
+        font-size: 1.5rem;
+    }
+}
+
+/* ===== भेजने वाले का नाम ===== */
+.sender-name-block { 
+    text-align: center; 
+    margin: 0.5rem 0 5rem; 
+    padding: 2.5rem; 
+    background: linear-gradient(145deg, #f6e9b2, #f3c96b, #ffb347); 
+    border-radius: 100px 30px 100px 30px; 
+    border: 8px solid #b34180; 
+    box-shadow: 0 18px 0 #732c5a; 
+    transform: rotate(-0.5deg); 
+    animation: senderZoom 3s infinite; 
+    position: relative;
+    clear: both;
+}
+@keyframes senderZoom { 
+    0%,100%{ transform: scale(1) rotate(-0.5deg); } 
+    50%{ transform: scale(1.03) rotate(0.5deg); } 
+}
+.sender-name-label { 
+    font-size: 2.5rem; 
+    color: #4b1a3a; 
+    font-weight: 600; 
+    letter-spacing: 2px; 
+    text-shadow: 3px 3px 0 #ffd966;
+}
+.sender-name-value { 
+    font-size: 4rem; 
+    font-weight: 800; 
+    background: linear-gradient(135deg, #a5174b, #f7b733); 
+    -webkit-background-clip: text; 
+    -webkit-text-fill-color: transparent; 
+    line-height: 1.3; 
+    filter: drop-shadow(0 5px 8px #a14141); 
+    word-break: break-word; 
+    animation: blinkGlow 1.2s infinite; 
+}
+@keyframes blinkGlow { 
+    0%{ opacity:1; text-shadow:0 0 5px white; } 
+    50%{ opacity:0.9; text-shadow:0 0 25px yellow,0 0 35px orange; } 
+    100%{ opacity:1; text-shadow:0 0 5px white; } 
+}
+
+/* ===== बड़ी इमेजेज - सभी यूनिक ===== */
+.big-image-card {
+    margin: 4rem 0 10rem 0;
+    padding: 3rem;
+    border-radius: 200px 60px 200px 60px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    clear: both;
+    background: linear-gradient(145deg, #fff8e7, #ffe4cc);
+    border: 8px solid #ffd966;
+    box-shadow: 0 20px 0 #b34180, 0 25px 30px rgba(0,0,0,0.2);
+    animation: bigBoxFloat 5s infinite;
+}
+@keyframes bigBoxFloat {
+    0%,100%{ transform: translateY(0); }
+    50%{ transform: translateY(-10px); }
+}
+
+.big-image {
+    width: 100%;
+    height: auto;
+    min-height: 800px;
+    object-fit: cover;
+    border-radius: 180px 50px 180px 50px;
+    border: 8px solid white;
+    box-shadow: 0 15px 0 rgba(0,0,0,0.1);
+    margin: 0 auto;
+    display: block;
+}
+
+/* विशेष इमेज एडजस्टमेंट */
+.big-image-card:nth-of-type(1) .big-image { min-height: 820px; }
+.big-image-card:nth-of-type(2) .big-image { min-height: 840px; object-position: center 30%; }
+.big-image-card:nth-of-type(3) .big-image { min-height: 830px; }
+.big-image-card:nth-of-type(4) .big-image { min-height: 850px; object-position: center 40%; }
+.big-image-card:nth-of-type(5) .big-image { min-height: 820px; }
+.big-image-card:nth-of-type(6) .big-image { min-height: 840px; object-position: center 20%; }
+.big-image-card:nth-of-type(7) .big-image { min-height: 830px; }
+.big-image-card:nth-of-type(8) .big-image { min-height: 820px; }
+.big-image-card:nth-of-type(9) .big-image { min-height: 840px; }
+.big-image-card:nth-of-type(10) .big-image { min-height: 830px; }
+.big-image-card:nth-of-type(11) .big-image { min-height: 820px; }
+.big-image-card:nth-of-type(12) .big-image { min-height: 840px; }
+
+.big-image-caption {
+    font-size: 3.5rem;
+    color: #9b1f3f;
+    text-shadow: 3px 3px 0 #ffd966;
+    text-align: center;
+    margin-top: 2rem;
+    font-family: 'Pacifico', cursive;
+    position: relative;
+    z-index: 5;
+}
+
+/* ===== होली मैसेज कार्ड ===== */
+.holi-message-card {
+    margin: 5rem 0 10rem 0;
+    padding: 5rem 4rem;
+    background: linear-gradient(135deg, #ff7e5f, #f64b6b, #ff4d6d);
+    border-radius: 180px 60px 180px 60px;
+    border: 8px solid #ffd966;
+    box-shadow: 0 20px 0 #b34180;
+    animation: messagePulse 5s infinite;
+    text-align: center;
+    position: relative;
+    overflow: visible;
+    clear: both;
+}
+@keyframes messagePulse {
+    0%,100%{ transform: scale(1); }
+    50%{ transform: scale(1.02); }
+}
+
+.message-icon {
+    font-size: 6rem;
+    margin-bottom: 2rem;
+    animation: iconJump 3s infinite;
+}
+@keyframes iconJump {
+    0%,100%{ transform: translateY(0); }
+    50%{ transform: translateY(-20px); }
+}
+
+.message-title {
+    font-size: 4rem;
+    color: #fffbcb;
+    margin-bottom: 2.5rem;
+    text-shadow: 5px 5px 0 #b34180;
+    font-family: 'Pacifico', cursive;
+}
+
+.message-content {
+    font-size: 3.2rem;
+    color: white;
+    line-height: 2;
+    margin: 2.5rem 0;
+    white-space: pre-line;
+    text-shadow: 4px 4px 0 #b34180;
+}
+
+.message-footer {
+    font-size: 3.5rem;
+    color: #ffd966;
+    margin-top: 2.5rem;
+}
+
+/* ===== GIF कार्ड ===== */
+.gif-card {
+    margin: 5rem 0 10rem 0;
+    padding: 3rem;
+    border-radius: 160px 50px 160px 50px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(145deg, #fff0d9, #ffe6b3);
+    border: 8px solid gold;
+    box-shadow: 0 20px 0 #b86b1f, 0 25px 30px rgba(0,0,0,0.2);
+    animation: gifBoxFloat 6s infinite;
+    clear: both;
+}
+@keyframes gifBoxFloat {
+    0%,100%{ transform: translateY(0); }
+    50%{ transform: translateY(-12px); }
+}
+
+.gif-card-image {
+    width: 100%;
+    height: auto;
+    min-height: 550px;
+    object-fit: cover;
+    border-radius: 140px 40px 140px 40px;
+    border: 8px solid white;
+    box-shadow: 0 15px 0 rgba(0,0,0,0.1);
+    margin: 0 auto;
+    display: block;
+}
+
+/* ===== शायरी कार्ड ===== */
+.shayari-card {
+    margin: 5rem 0 10rem 0;
+    padding: 5rem 4rem;
+    border-radius: 160px 50px 160px 50px;
+    text-align: center;
+    position: relative;
+    overflow: visible;
+    clear: both;
+    background: linear-gradient(135deg, #78e08f, #38ada9, #079992);
+    border: 8px solid #e55039;
+    box-shadow: 0 20px 0 #079992, 0 25px 30px rgba(0,0,0,0.2);
+    animation: shayari4 9s infinite;
+}
+@keyframes shayari4 {
+    0%,100%{ filter: brightness(1); }
+    50%{ filter: brightness(1.15); }
+}
+
+.shayari-text {
+    font-size: 3.2rem;
+    color: white;
+    line-height: 2.2;
+    text-shadow: 4px 4px 0 rgba(0,0,0,0.3);
+    white-space: pre-line;
+}
+
+/* ===== नीचे की छोटी इमेजेज - तीन-तीन, बड़ी और साफ ===== */
+.bottom-images {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 80px 0 100px 0;
+    clear: both;
+    position: relative;
+    z-index: 25;
+    width: 100%;
+    padding: 0 20px;
+}
+
+.bottom-image {
+    width: 380px;
+    height: 380px;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 6px solid gold;
+    box-shadow: 0 20px 0 #b86b1f, 0 15px 25px rgba(0,0,0,0.2);
+    background: white;
+    display: inline-block;
+    transition: all 0.3s ease;
+}
+
+.bottom-image:hover {
+    transform: scale(1.1);
+    box-shadow: 0 25px 0 #b86b1f, 0 20px 35px rgba(0,0,0,0.25);
+}
+
+/* तीन इमेज के लिए अलग-अलग एनिमेशन */
+.bottom-image:nth-child(1) {
+    animation: floatImg1 6s infinite ease-in-out;
+}
+.bottom-image:nth-child(2) {
+    animation: floatImg2 7s infinite ease-in-out;
+}
+.bottom-image:nth-child(3) {
+    animation: floatImg3 8s infinite ease-in-out;
+}
+
+@keyframes floatImg1 {
+    0%,100%{ transform: translateY(0) translateX(0); }
+    50%{ transform: translateY(-20px) translateX(-8px); }
+}
+@keyframes floatImg2 {
+    0%,100%{ transform: translateY(0) translateX(0); }
+    50%{ transform: translateY(-25px) translateX(0); }
+}
+@keyframes floatImg3 {
+    0%,100%{ transform: translateY(0) translateX(0); }
+    50%{ transform: translateY(-18px) translateX(8px); }
+}
+
+/* ===== टाइमर कार्ड ===== */
+.timer-card { 
+    background: linear-gradient(135deg, #fee3d4, #ffd0b5, #ffb59e); 
+    border-radius: 120px 120px 60px 60px; 
+    padding: 4rem; 
+    margin: 5rem 0 10rem 0; 
+    border: 8px solid #ff784b; 
+    box-shadow: 0 20px 0 #b34723, 0 25px 30px rgba(0,0,0,0.2); 
+    animation: timerFlip 8s infinite; 
+    text-align: center; 
+    position: relative;
+    overflow: visible;
+    clear: both;
+}
+@keyframes timerFlip { 
+    0%,100%{ transform: rotateY(0deg); } 
+    50%{ transform: rotateY(8deg); } 
+}
+.status-badge { 
+    font-size: 3rem; 
+    background: #8a2c0e; 
+    color: #ffdb7c; 
+    padding: 1.5rem 4rem; 
+    border-radius: 120px; 
+    display: inline-block; 
+    border: 8px solid #fdbb34; 
+}
+.timer-display { 
+    font-size: 3rem; 
+    color: #440f0f; 
+    font-weight: bold; 
+    margin: 2.5rem 0; 
+}
+
+/* ===== गिफ्ट कार्ड ===== */
+.gift-card { 
+    background: linear-gradient(135deg, #ff7e5f, #f64b6b, #ff4d6d); 
+    border-radius: 180px 60px 180px 60px; 
+    padding: 5rem 4rem; 
+    margin: 5rem 0 10rem 0; 
+    border: 8px solid #ffd966; 
+    box-shadow: 0 22px 0 #b34180, 0 25px 30px rgba(0,0,0,0.2); 
+    animation: giftGlow 4s infinite; 
+    text-align: center;
+    position: relative;
+    overflow: visible;
+    clear: both;
+}
+@keyframes giftGlow { 
+    0%,100%{ box-shadow: 0 22px 0 #b34180; } 
+    50%{ box-shadow: 0 22px 0 #c44569; } 
+}
+.gift-btn-super { 
+    background: linear-gradient(135deg, #ffd966, #ffb347); 
+    border: none; 
+    font-size: 3rem; 
+    padding: 2.2rem 5rem; 
+    border-radius: 140px; 
+    color: #9b1f3f; 
+    font-weight: bold; 
+    border-bottom: 8px solid #b34180; 
+    cursor: pointer; 
+    margin-top: 2.5rem;
+    transition: all 0.2s ease;
+}
+.gift-btn-super:hover {
+    transform: scale(1.05);
+}
+
+/* ===== म्यूजिक सेक्शन ===== */
+.music-wrapper { 
+    margin: 5rem 0 10rem 0; 
+    text-align: center; 
+}
+.music-btn { 
+    background: #8a4f8a; 
+    color: white; 
+    font-size: 2.8rem; 
+    padding: 2.5rem 5rem; 
+    border-radius: 120px; 
+    border-bottom: 8px solid #4f2e4f; 
+    cursor: pointer; 
+    transition: all 0.2s ease;
+}
+.music-btn:hover {
+    transform: scale(1.05);
+}
+
+/* ===== UPI डोनेशन सेक्शन - नया जोड़ा गया ===== */
+.upi-donation-card {
+    background: linear-gradient(135deg, #ffd166, #ffb347, #ff9f4d);
+    border-radius: 180px 60px 180px 60px;
+    padding: 6rem 5rem;
+    margin: 5rem 0 5rem 0;
+    border: 8px solid #b34180;
+    box-shadow: 0 25px 0 #732c5a, 0 30px 40px rgba(0,0,0,0.2);
+    text-align: center;
+    position: relative;
+    overflow: visible;
+    clear: both;
+    animation: upiGlow 4s infinite;
+}
+@keyframes upiGlow {
+    0%,100%{ box-shadow: 0 25px 0 #732c5a, 0 30px 40px rgba(0,0,0,0.2); }
+    50%{ box-shadow: 0 25px 0 #b34180, 0 35px 45px rgba(0,0,0,0.25); }
+}
+
+.upi-title {
+    font-size: 5rem;
+    color: #9b1f3f;
+    text-shadow: 5px 5px 0 #ffd966;
+    margin-bottom: 3rem;
+    font-family: 'Pacifico', cursive;
+}
+
+.upi-message {
+    font-size: 3.2rem;
+    color: white;
+    margin-bottom: 4rem;
+    line-height: 1.6;
+    text-shadow: 3px 3px 0 #b34180;
+    background: rgba(0,0,0,0.1);
+    padding: 2rem 3rem;
+    border-radius: 100px;
+    display: inline-block;
+    backdrop-filter: blur(5px);
+}
+
+.upi-app-icons {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    margin: 3rem 0;
+    flex-wrap: wrap;
+}
+
+.upi-app-icon {
+    background: white;
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 4rem;
+    color: #9b1f3f;
+    border: 4px solid gold;
+    box-shadow: 0 10px 0 #b86b1f;
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+.upi-app-icon:hover {
+    transform: scale(1.1);
+    box-shadow: 0 12px 0 #b86b1f;
+}
+
+.upi-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 25px;
+    margin: 4rem 0;
+}
+
+.upi-pay-btn {
+    background: white;
+    color: #9b1f3f;
+    font-size: 2.8rem;
+    padding: 2.5rem 4rem;
+    border-radius: 120px;
+    border: none;
+    border-bottom: 10px solid #b86b1f;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 15px;
+    transition: all 0.2s ease;
+    box-shadow: 0 20px 30px rgba(0,0,0,0.2);
+    font-weight: bold;
+    min-width: 200px;
+    justify-content: center;
+}
+
+.upi-pay-btn i {
+    font-size: 3.5rem;
+    color: #25D366;
+}
+
+.upi-pay-btn:hover {
+    transform: scale(1.08);
+    background: #f0f0f0;
+}
+
+.upi-custom-amount {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+    margin: 3rem 0;
+    flex-wrap: wrap;
+}
+
+.upi-custom-input {
+    font-size: 2.5rem;
+    padding: 1.8rem 2.5rem;
+    border-radius: 80px;
+    border: 6px solid gold;
+    width: 250px;
+    text-align: center;
+    font-family: 'Baloo 2', sans-serif;
+    outline: none;
+}
+
+.upi-custom-btn {
+    background: #9b1f3f;
+    color: white;
+    font-size: 2.5rem;
+    padding: 1.8rem 3.5rem;
+    border-radius: 80px;
+    border: none;
+    border-bottom: 8px solid #4f2e4f;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+.upi-custom-btn:hover {
+    transform: scale(1.05);
+}
+
+.upi-qr-container {
+    margin: 3rem 0 2rem 0;
+    padding: 3rem;
+    background: white;
+    border-radius: 100px;
+    display: inline-block;
+    border: 8px solid gold;
+    box-shadow: 0 20px 0 #b86b1f;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    position: relative;
+}
+.upi-qr-container:hover {
+    transform: scale(1.02);
+    box-shadow: 0 22px 0 #b86b1f;
+}
+.upi-qr-container::after {
+    content: "🔍 क्लिक करें QR स्कैन करने के लिए";
+    position: absolute;
+    bottom: -50px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #9b1f3f;
+    color: white;
+    padding: 1rem 2rem;
+    border-radius: 60px;
+    font-size: 1.8rem;
+    white-space: nowrap;
+    opacity: 0;
+    transition: all 0.3s ease;
+    pointer-events: none;
+    border-bottom: 4px solid #4f2e4f;
+}
+.upi-qr-container:hover::after {
+    opacity: 1;
+    bottom: -60px;
+}
+
+.upi-qr-img {
+    width: 350px;
+    height: 350px;
+    border-radius: 50px;
+    cursor: pointer;
+}
+
+.upi-note {
+    font-size: 2.5rem;
+    color: #4a235a;
+    margin-top: 4rem;
+    font-weight: 600;
+    text-shadow: 1px 1px 0 #ffd966;
+}
+
+.upi-id-display {
+    font-size: 2.8rem;
+    background: rgba(255,255,255,0.4);
+    padding: 2rem 4rem;
+    border-radius: 120px;
+    display: inline-block;
+    margin: 2rem 0;
+    border: 6px solid gold;
+    color: #9b1f3f;
+    font-weight: bold;
+    backdrop-filter: blur(5px);
+}
+
+/* ===== नीचे वाला शेयर सेक्शन ===== */
+.share-card-bottom { 
+    background: linear-gradient(135deg, #d4edff, #b8e2ff, #9bd6ff); 
+    border-radius: 120px 120px 60px 60px; 
+    padding: 4rem; 
+    margin: 5rem 0; 
+    border: 8px solid #ff7f9f; 
+    box-shadow: 0 22px 0 #b34360, 0 25px 30px rgba(0,0,0,0.2); 
+    position: relative;
+    overflow: visible;
+    clear: both;
+    text-align: center;
+}
+.name-input-bottom { 
+    padding: 2.2rem 3rem; 
+    width: 90%; 
+    border: 8px solid #ec4e7a; 
+    border-radius: 120px; 
+    font-size: 2.5rem; 
+    margin: 2.5rem 0;
+    font-family: 'Baloo 2', sans-serif;
+}
+.whatsapp-share-btn-bottom { 
+    background: #25D366; 
+    color: white; 
+    font-size: 2.8rem; 
+    padding: 2.2rem 5rem; 
+    border-radius: 120px; 
+    border-bottom: 8px solid #128C7E; 
+    cursor: pointer; 
+    margin-top: 2rem; 
+    display: inline-flex;
+    align-items: center;
+    gap: 15px;
+    transition: all 0.2s ease;
+}
+.whatsapp-share-btn-bottom:hover {
+    transform: scale(1.05);
+}
+
+/* ===== इमोजी रनर - पतली लाइन (9px) ===== */
+.ant-boundary { 
+    position: fixed; 
+    inset: 0; 
+    pointer-events: none; 
+    z-index: 9999; 
+    opacity: 0.4; 
+    height: 100%;
+    width: 100%;
+    border: 1px solid transparent;
+}
+.ant-emoji { 
+    position: absolute; 
+    font-size: 2.2rem; 
+    filter: drop-shadow(0 2px 3px rgba(0,0,0,0.15)); 
+    color: rgba(255,120,100,0.5);
+    transition: all 0.03s linear;
+}
+
+/* ===== गिफ्ट मोडल ===== */
+#giftModal { 
+    position: fixed; 
+    inset: 0; 
+    background: rgba(0, 0, 0, 0.95); 
+    display: none; 
+    align-items: center; 
+    justify-content: center; 
+    z-index: 20000; 
+}
+.modal-content { 
+    background: linear-gradient(135deg, #ffd166, #ffb347); 
+    padding: 5rem; 
+    border-radius: 180px 60px 180px 60px; 
+    text-align: center; 
+    border: 8px solid #ff4d6d; 
+    max-width: 90%;
+}
+.modal-content h2 {
+    font-size: 5rem;
+    margin-bottom: 2rem;
+}
+.modal-content p {
+    font-size: 3rem;
+    margin: 1.5rem 0;
+}
+.close-modal-btn {
+    background: #ff4d6d;
+    color: white;
+    border: none;
+    font-size: 3rem;
+    padding: 2rem 5rem;
+    border-radius: 120px;
+    margin-top: 3rem;
+    cursor: pointer;
+    border-bottom: 8px solid #b33a2f;
+    transition: all 0.2s ease;
+}
+.close-modal-btn:hover {
+    transform: scale(1.05);
+}
+
+/* ===== रिस्पॉन्सिव डिजाइन ===== */
+@media (max-width: 1200px) {
+    .bottom-image { width: 320px; height: 320px; }
+    .upi-pay-btn { font-size: 2.5rem; padding: 2rem 3rem; }
+}
+
+@media (max-width: 768px) {
+    .bottom-image { width: 240px; height: 240px; }
+    .big-image { min-height: 450px; }
+    .gif-card-image { min-height: 350px; }
+    .ant-emoji { font-size: 1.8rem; }
+    .upi-pay-btn { font-size: 2.2rem; padding: 1.8rem 2.5rem; }
+    .upi-title { font-size: 3.5rem; }
+    .upi-message { font-size: 2.5rem; }
+    .upi-qr-img { width: 250px; height: 250px; }
+    .upi-app-icon { width: 70px; height: 70px; font-size: 3rem; }
+}
+
+@media (max-width: 480px) {
+    .bottom-image { width: 180px; height: 180px; }
+    .big-image { min-height: 350px; }
+}
+
+@media (min-width: 769px) {
+    .big-image { min-height: 800px; }
+    .gif-card-image { min-height: 550px; }
+}
+</style>
+</head>
+<body>
+
+<!-- पर्दा (बड़ा और आकर्षक) -->
+<div id="curtain">
+    <div class="curtain-panel left"></div>
+    <div class="curtain-panel right"></div>
+    <div id="curtain-center">
+        <div class="magic-card">
+            <h1 style="font-size:4rem;">🌸 होली मुबारक 🌸</h1>
+            <p style="font-size:3rem;">टैप करें</p>
+            <div style="font-size:5rem;">🌈🎨💧</div>
+        </div>
+    </div>
+</div>
+
+<!-- इमोजी रनर - पतली लाइन (9px) -->
+<div class="ant-boundary" id="antContainer"></div>
+
+<!-- फ्लोटिंग व्हाट्सएप कंटेनर - नाम बॉक्स के साथ -->
+<div class="whatsapp-share-container">
+    <div class="whatsapp-name-box">
+        <input type="text" id="floatingNameInput" placeholder="आपका नाम">
+        <button id="floatingShareBtn">शेयर करें</button>
+    </div>
+    <button class="floating-whatsapp" id="floatingWhatsappBtn">
+        <i class="fab fa-whatsapp"></i> व्हाट्सएप
+    </button>
+</div>
+
+<!-- मुख्य साइट -->
+<div id="mainSite">
+
+    <!-- भेजने वाले का नाम -->
+    <div class="sender-name-block" id="senderBlock">
+        <div class="sender-name-label">💐 भेजने वाला 💐</div>
+        <div class="sender-name-value" id="senderNameDisplay">आपका परिवार</div>
+    </div>
+
+    <!-- एड 1 -->
+    <div class="ad-container">
+        <ins class="adsbygoogle"
+             style="display:block"
+             data-ad-client="ca-pub-xxxxxxxxxxxxxxxx"
+             data-ad-slot="xxxxxxxxxx"
+             data-ad-format="auto"></ins>
+        <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    </div>
+
+    <!-- ===== सभी बड़ी इमेजेज एक बार ===== -->
+    
+    <!-- बड़ी इमेज 1 -->
+    <div class="big-image-card">
+        <img src="https://uploads.onecompiler.io/43fcd56ek/44eu28jtq/GIF_20260227_114918_877.gif" class="big-image" alt="Holi GIF 1">
+        <div class="big-image-caption">🌈 होली का रंग 🌈</div>
+    </div>
+    <div class="bottom-images">
+        <img src="https://uploads.onecompiler.io/44eucr92b/44eucrb95/GIF_20260227_133818_353.gif" class="bottom-image">
+        <img src="https://uploads.onecompiler.io/44eucr92b/44eucrb95/GIF_20260227_131009_948.gif" class="bottom-image">
+        <img src="https://uploads.onecompiler.io/44ewsfx3x/44exp7b45/GIF_20260228_164841_559.gif" class="bottom-image">
+    </div>
+
+    <!-- बड़ी इमेज 2 -->
+    <div class="big-image-card">
+        <img src="https://uploads.onecompiler.io/43fcd56ek/44etxpx4h/GIF_20260227_111704_797.gif" class="big-image" alt="Holi GIF 2">
+        <div class="big-image-caption">🌸 रंग बरसे 🌸</div>
+    </div>
+    <div class="bottom-images">
+        <img src="https://uploads.onecompiler.io/44eucr92b/44eucrb95/GIF_20260227_131009_948.gif" class="bottom-image">
+        <img src="https://uploads.onecompiler.io/44eucr92b/44eucrb95/GIF_20260227_133114_961.gif" class="bottom-image">
+        <img src="https://uploads.onecompiler.io/43fcd56ek/44eucj7bj/GIF_20260227_142752_992.gif" class="bottom-image">
+    </div>
+
+    <!-- बड़ी इमेज 3 -->
+    <div class="big-image-card">
+        <img src="https://uploads.onecompiler.io/43fcd56ek/44eucj7bj/GIF_20260227_142752_992.gif" class="big-image" alt="Holi GIF 3">
+        <div class="big-image-caption">🎨 पिचकारी 🎨</div>
+    </div>
+    <div class="bottom-images">
+        <img src="https://uploads.onecompiler.io/44eucr92b/44eucrb95/GIF_20260227_133818_353.gif" class="bottom-image">
+        <img src="https://uploads.onecompiler.io/44eucr92b/44eucrb95/GIF_20260227_131009_948.gif" class="bottom-image">
+        <img src="https://uploads.onecompiler.io/44eucr92b/44eucrb95/GIF_20260227_133114_961.gif" class="bottom-image">
+    </div>
+
+    <!-- बड़ी इमेज 4 -->
+    <div class="big-image-card">
+        <img src="https://uploads.onecompiler.io/43fcd56ek/44eucj7bj/GIF_20260227_142604_859.gif" class="big-image" alt="Holi GIF 4">
+        <div class="big-image-caption">💧 गुलाल 💧</div>
+    </div>
+    <div class="bottom-images">
+        <img src="https://uploads.onecompiler.io/44eucr92b/44eucrb95/GIF_20260227_131009_948.gif" class="bottom-image">
+        <img src="https://uploads.onecompiler.io/44eucr92b/44eucrb95/GIF_20260227_133114_961.gif" class="bottom-image">
+        <img src="https://uploads.onecompiler.io/43fcd56ek/44eucj7bj/GIF_20260227_142604_859.gif" class="bottom-image">
+    </div>
+
+    <!-- बड़ी इमेज 5 (नई) -->
+    <div class="big-image-card">
+        <img src="https://uploads.onecompiler.io/44eucr92b/44eucrb95/GIF_20260227_133818_353.gif" class="big-image" alt="Holi GIF 5">
+        <div class="big-image-caption">🎊 धमाल 🎊</div>
+    </div>
+    <div class="bottom-images">
+        <img src="https://uploads.onecompiler.io/44eucr92b/44eucrb95/GIF_20260227_131009_948.gif" class="bottom-image">
+        <img src="https://uploads.onecompiler.io/44eucr92b/44eucrb95/GIF_20260227_133114_961.gif" class="bottom-image">
+        <img src="https://uploads.onecompiler.io/44ewsfx3x/44exp7b45/GIF_20260228_164841_559.gif" class="bottom-image">
+    </div>
+
+    <!-- बड़ी इमेज 6 -->
+    <div class="big-image-card">
+        <img src="https://uploads.onecompiler.io/44eucr92b/44eucrb95/GIF_20260227_131009_948.gif" class="big-image" alt="Holi GIF 6">
+        <div class="big-image-caption">🥳 मस्ती 🥳</div>
+    </div>
+    <div class="bottom-images">
+        <img src="https://uploads.onecompiler.io/43fcd56ek/44eu28jtq/GIF_20260227_114918_877.gif" class="bottom-image">
+        <img src="https://uploads.onecompiler.io/43fcd56ek/44etxpx4h/GIF_20260227_111704_797.gif" class="bottom-image">
+        <img src="https://uploads.onecompiler.io/44ewsfx3x/44exp7b45/GIF_20260228_164841_559.gif" class="bottom-image">
+    </div>
+
+    <!-- बड़ी इमेज 7 -->
+    <div class="big-image-card">
+        <img src="https://uploads.onecompiler.io/44eucr92b/44eucrb95/GIF_20260227_133114_961.gif" class="big-image" alt="Holi GIF 7">
+        <div class="big-image-caption">🪅 होली 🪅</div>
+    </div>
+    <div class="bottom-images">
+        <img src="https://uploads.onecompiler.io/43fcd56ek/44eucj7bj/GIF_20260227_142752_992.gif" class="bottom-image">
+        <img src="https://uploads.onecompiler.io/43fcd56ek/44eucj7bj/GIF_20260227_142604_859.gif" class="bottom-image">
+        <img src="https://uploads.onecompiler.io/44ewsfx3x/44exp7b45/GIF_20260228_164841_559.gif" class="bottom-image">
+    </div>
+
+    <!-- बड़ी इमेज 8 -->
+    <div class="big-image-card">
+        <img src="https://uploads.onecompiler.io/44eucr92b/44ews8gnh/GIF_20260228_093829_310.gif" class="big-image" alt="Holi GIF 8">
+        <div class="big-image-caption">🎨 होली शायरी 1</div>
+    </div>
+    <div class="bottom-images">
+        <img src="https://uploads.onecompiler.io/43fcd56ek/44eucj7bj/GIF_20260227_142604_859.gif" class="bottom-image">
+        <img src="https://uploads.onecompiler.io/44eucr92b/44eucrb95/GIF_20260227_133818_353.gif" class="bottom-image">
+        <img src="https://uploads.onecompiler.io/44eucr92b/44eucrb95/GIF_20260227_131009_948.gif" class="bottom-image">
+    </div>
+
+    <!-- बड़ी इमेज 9 -->
+    <div class="big-image-card">
+        <img src="https://uploads.onecompiler.io/44ewsfx3x/44ewsfzej/GIF_20260228_093522_216.gif" class="big-image" alt="Holi GIF 9">
+        <div class="big-image-caption">🌸 होली शायरी 2</div>
+    </div>
+    <div class="bottom-images">
+        <img src="https://uploads.onecompiler.io/43fcd56ek/44eu28jtq/GIF_20260227_114918_877.gif" class="bottom-image">
+        <img src="https://uploads.onecompiler.io/43fcd56ek/44etxpx4h/GIF_20260227_111704_797.gif" class="bottom-image">
+        <img src="https://uploads.onecompiler.io/44ewsfx3x/44exp7b45/GIF_20260228_164841_559.gif" class="bottom-image">
+    </div>
+
+    <!-- बड़ी इमेज 10 -->
+    <div class="big-image-card">
+        <img src="https://uploads.onecompiler.io/44ewsfx3x/44ewtca8n/GIF_20260228_095157_306.gif" class="big-image" alt="Holi GIF 10">
+        <div class="big-image-caption">🌈 होली शायरी 3</div>
+    </div>
+    <div class="bottom-images">
+        <img src="https://uploads.onecompiler.io/44eucr92b/44eucrb95/GIF_20260227_133114_961.gif" class="bottom-image">
+        <img src="https://uploads.onecompiler.io/43fcd56ek/44eucj7bj/GIF_20260227_142752_992.gif" class="bottom-image">
+        <img src="https://uploads.onecompiler.io/44ewsfx3x/44exp7b45/GIF_20260228_164841_559.gif" class="bottom-image">
+    </div>
+
+    <!-- बड़ी इमेज 11 -->
+    <div class="big-image-card">
+        <img src="https://uploads.onecompiler.io/44ewsfx3x/44exp7b45/GIF_20260228_164841_559.gif" class="big-image" alt="Holi GIF 11">
+        <div class="big-image-caption">🎨 रंगीन होली</div>
+    </div>
+    <div class="bottom-images">
+        <img src="https://uploads.onecompiler.io/43fcd56ek/44eucj7bj/GIF_20260227_142752_992.gif" class="bottom-image">
+        <img src="https://uploads.onecompiler.io/43fcd56ek/44eucj7bj/GIF_20260227_142604_859.gif" class="bottom-image">
+        <img src="https://uploads.onecompiler.io/44eucr92b/44eucrb95/GIF_20260227_131009_948.gif" class="bottom-image">
+    </div>
+
+    <!-- टाइमर कार्ड -->
+    <div class="timer-card">
+        <div class="status-badge" id="statusTitle">होली 2026</div>
+        <div class="timer-display" id="timerDisplay">-- दिन : -- घंटे</div>
+    </div>
+    <div class="bottom-images">
+        <img src="https://uploads.onecompiler.io/43fcd56ek/44eucj7bj/GIF_20260227_142752_992.gif" class="bottom-image">
+        <img src="https://uploads.onecompiler.io/43fcd56ek/44eucj7bj/GIF_20260227_142604_859.gif" class="bottom-image">
+        <img src="https://uploads.onecompiler.io/44eucr92b/44eucrb95/GIF_20260227_133114_961.gif" class="bottom-image">
+    </div>
+
+    <!-- एड 2 -->
+    <div class="ad-container">
+        <ins class="adsbygoogle"
+             style="display:block"
+             data-ad-client="ca-pub-xxxxxxxxxxxxxxxx"
+             data-ad-slot="xxxxxxxxxx"
+             data-ad-format="auto"></ins>
+        <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    </div>
+
+    <!-- होली मैसेज कार्ड -->
+    <div class="holi-message-card" id="holiMessageCard">
+        <div class="message-icon">🎨</div>
+        <div class="message-title" id="messageTitle">होली की हार्दिक शुभकामनाएं</div>
+        <div class="message-content" id="messageContent">खुशियों से भर जाए आपकी झोली<br>आप सभी को मेरी तरफ से...<br>HAPPY HOLI IN ADVANCE</div>
+        <div class="message-footer" id="messageFooter">🌈🎨💧</div>
+    </div>
+    <div class="bottom-images">
+        <img src="https://uploads.onecompiler.io/44eucr92b/44eucrb95/GIF_20260227_133114_961.gif" class="bottom-image">
+        <img src="https://uploads.onecompiler.io/43fcd56ek/44eucj7bj/GIF_20260227_142752_992.gif" class="bottom-image">
+        <img src="https://uploads.onecompiler.io/44ewsfx3x/44exp7b45/GIF_20260228_164841_559.gif" class="bottom-image">
+    </div>
+
+    <!-- शायरी कार्ड -->
+    <div class="shayari-card">
+        <div class="shayari-text">
+            उतना ही लो गिलास में,<br>
+            घरवालों को ना जाना पड़े<br>
+            आपकी तलाश में...<br>
+            हैप्पी होली!
+        </div>
+    </div>
+    <div class="bottom-images">
+        <img src="https://uploads.onecompiler.io/43fcd56ek/44eucj7bj/GIF_20260227_142604_859.gif" class="bottom-image">
+        <img src="https://uploads.onecompiler.io/44eucr92b/44eucrb95/GIF_20260227_133818_353.gif" class="bottom-image">
+        <img src="https://uploads.onecompiler.io/44eucr92b/44eucrb95/GIF_20260227_131009_948.gif" class="bottom-image">
+    </div>
+
+    <!-- गिफ्ट कार्ड -->
+    <div class="gift-card">
+        <div style="font-size: 6rem; margin-bottom: 2rem;">🎁✨</div>
+        <div style="font-size: 4rem; color: white; margin-bottom: 2.5rem;">होली स्पेशल गिफ्ट</div>
+        <div style="font-size: 3.5rem; color: white; margin: 2rem 0;">🎨 5 रंगों का पैकेट</div>
+        <div style="font-size: 3.5rem; color: white; margin: 2rem 0;">🌸 गुलाल और पिचकारी</div>
+        <button class="gift-btn-super" onclick="openGiftModal()">गिफ्ट खोलें 🎁</button>
+    </div>
+    <div class="bottom-images">
+        <img src="https://uploads.onecompiler.io/44eucr92b/44eucrb95/GIF_20260227_131009_948.gif" class="bottom-image">
+        <img src="https://uploads.onecompiler.io/44eucr92b/44eucrb95/GIF_20260227_133114_961.gif" class="bottom-image">
+        <img src="https://uploads.onecompiler.io/44ewsfx3x/44exp7b45/GIF_20260228_164841_559.gif" class="bottom-image">
+    </div>
+
+    <!-- म्यूजिक सेक्शन -->
+    <div class="music-wrapper">
+        <button class="music-btn" id="musicPlayBtn">🎵 होली गीत बजाएं</button>
+    </div>
+    <div class="bottom-images">
+        <img src="https://uploads.onecompiler.io/43fcd56ek/44eucj7bj/GIF_20260227_142752_992.gif" class="bottom-image">
+        <img src="https://uploads.onecompiler.io/43fcd56ek/44eucj7bj/GIF_20260227_142604_859.gif" class="bottom-image">
+        <img src="https://uploads.onecompiler.io/44ewsfx3x/44exp7b45/GIF_20260228_164841_559.gif" class="bottom-image">
+    </div>
+
+    <!-- एड 3 -->
+    <div class="ad-container">
+        <ins class="adsbygoogle"
+             style="display:block"
+             data-ad-client="ca-pub-xxxxxxxxxxxxxxxx"
+             data-ad-slot="xxxxxxxxxx"
+             data-ad-format="auto"></ins>
+        <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    </div>
+
+    <!-- ===== UPI डोनेशन सेक्शन - शेयर सेक्शन के ठीक ऊपर ===== -->
+    <div class="upi-donation-card">
+        <div class="upi-title">🙏 आपका प्यार ही हमारी ताकत</div>
+        <div class="upi-message">
+            ✨ त्योहारों की खुशियाँ दोगुनी करें ✨<br>
+            अगर यह होली पेज आपको पसंद आया,<br>
+            तो अपनी शुभकामनाओं के साथ थोड़ा सा प्यार भी भेजें 💝
+        </div>
+        
+        <!-- UPI ऐप आइकॉन -->
+        <div class="upi-app-icons">
+            <div class="upi-app-icon" onclick="openUPIApp('gpay')"><i class="fab fa-google-pay"></i></div>
+            <div class="upi-app-icon" onclick="openUPIApp('phonepe')"><i class="fas fa-mobile-alt"></i></div>
+            <div class="upi-app-icon" onclick="openUPIApp('paytm')"><i class="fab fa-paytm"></i></div>
+            <div class="upi-app-icon" onclick="openUPIApp('amazonpay')"><i class="fab fa-amazon-pay"></i></div>
+        </div>
+        
+        <!-- UPI बटन (बड़े और आकर्षक) -->
+        <div class="upi-buttons">
+            <button class="upi-pay-btn" onclick="payViaUPI('renudevi9984@ybl', '11')">
+                <i class="fas fa-heart"></i> ₹11 सपोर्ट
+            </button>
+            <button class="upi-pay-btn" onclick="payViaUPI('renudevi9984@ybl', '21')">
+                <i class="fas fa-star"></i> ₹21 सपोर्ट
+            </button>
+            <button class="upi-pay-btn" onclick="payViaUPI('renudevi9984@ybl', '51')">
+                <i class="fas fa-crown"></i> ₹51 सपोर्ट
+            </button>
+            <button class="upi-pay-btn" onclick="payViaUPI('renudevi9984@ybl', '101')">
+                <i class="fas fa-gem"></i> ₹101 स्पेशल
+            </button>
+        </div>
+        
+        <!-- कस्टम अमाउंट ऑप्शन -->
+        <div class="upi-custom-amount">
+            <input type="number" id="customAmount" class="upi-custom-input" placeholder="₹ राशि डालें" min="1">
+            <button class="upi-custom-btn" onclick="payCustomAmount()">
+                <i class="fas fa-hand-holding-heart"></i> भेजें
+            </button>
+        </div>
+        
+        <!-- UPI ID डिस्प्ले -->
+        <div class="upi-id-display">
+            <i class="fas fa-qrcode"></i> renudevi9984@ybl
+        </div>
+        
+        <!-- UPI QR कोड - क्लिक करने पर स्कैन -->
+        <div class="upi-qr-container" onclick="scanQRCode()">
+            <p style="font-size:2.5rem; margin-bottom:1.5rem; color:#9b1f3f;">📱 QR कोड स्कैन करें</p>
+            <img src="https://api.qrserver.com/v1/create-qr-code/?size=350x350&data=upi://pay?pa=renudevi9984@ybl&pn=Renuka%20Devi&cu=INR" class="upi-qr-img" alt="UPI QR Code">
+        </div>
+        
+        <div class="upi-note">
+            <i class="fas fa-shield-alt"></i> 100% सुरक्षित भुगतान - आपकी जानकारी पूरी तरह सुरक्षित है
+        </div>
+    </div>
+
+    <!-- नीचे वाला शेयर सेक्शन -->
+    <div class="share-card-bottom">
+        <h2 style="font-size:3.5rem;">📲 अपना नाम लिखें और शेयर करें</h2>
+        <input class="name-input-bottom" type="text" id="userNameInput" placeholder="आपका नाम"><br>
+        <button class="share-action-btn" onclick="createShareLink()">लिंक बनाएं</button>
+        <div class="share-link-container" id="shareLinkDisplay"></div>
+        <button class="whatsapp-share-btn-bottom" id="whatsappShareBtn">
+            <i class="fab fa-whatsapp"></i> व्हाट्सएप शेयर
+        </button>
+    </div>
+</div>
+
+<!-- गिफ्ट मोडल -->
+<div id="giftModal" onclick="if(event.target===this) closeGiftModal()">
+    <div class="modal-content">
+        <h2 style="font-size:5rem;">🎉 होली गिफ्ट 🎉</h2>
+        <p style="font-size:3rem;">आपको मिला:</p>
+        <p style="font-size:4rem; color:#9b1f3f;">🎨 5 रंगों का पैकेट</p>
+        <p style="font-size:4rem; color:#9b1f3f;">🌸 गुलाल और पिचकारी</p>
+        <div style="font-size:6rem; margin:2.5rem 0;">🎁✨🎨🌈</div>
+        <p style="font-size:3.5rem;">होली मुबारक हो! 🌸</p>
+        <button class="close-modal-btn" onclick="closeGiftModal()">बंद करें</button>
+    </div>
+</div>
+
+<!-- ऑडियो एलिमेंट -->
+<audio id="holiAudio" loop preload="auto">
+    <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3" type="audio/mpeg">
+</audio>
+
+<script>
+(function() {
+    const HOLI_START = new Date('2026-03-04T00:00:00+05:30').getTime();
+    const HOLI_END = new Date('2026-03-05T00:00:00+05:30').getTime();
+    const urlParams = new URLSearchParams(window.location.search);
+    let userName = urlParams.get('name') ? decodeURIComponent(urlParams.get('name')).trim() : '';
+
+    const senderNameDisplay = document.getElementById('senderNameDisplay');
+    if (userName) {
+        senderNameDisplay.innerText = userName;
+        document.title = `${userName} की होली`;
+    } else {
+        senderNameDisplay.innerText = 'आपका परिवार';
+    }
+
+    // कर्टेन
+    document.getElementById('curtain-center').addEventListener('click', function() {
+        document.querySelector('.left').classList.add('open-left');
+        document.querySelector('.right').classList.add('open-right');
+        
+        setTimeout(() => {
+            document.getElementById('curtain').style.display = 'none';
+            document.body.classList.add('site-visible');
+        }, 300);
+        
+        const audio = document.getElementById('holiAudio');
+        audio.play().catch(e => console.log('ऑटोप्ले ब्लॉक हुआ', e));
+    });
+
+    // टाइमर और मैसेज अपडेट
+    const statusTitle = document.getElementById('statusTitle');
+    const timerDisplay = document.getElementById('timerDisplay');
+    const messageTitle = document.getElementById('messageTitle');
+    const messageContent = document.getElementById('messageContent');
+    const messageFooter = document.getElementById('messageFooter');
+    
+    function updateTimerAndMessage() {
+        const now = Date.now();
+        
+        if (now < HOLI_START) {
+            let d = HOLI_START - now;
+            let days = Math.floor(d/(86400000)), 
+                hrs = Math.floor((d%86400000)/3600000), 
+                min = Math.floor((d%3600000)/60000), 
+                sec = Math.floor((d%60000)/1000);
+            timerDisplay.innerHTML = `${days} दिन : ${hrs} घंटे : ${min} मिनट : ${sec} सेकंड`;
+            statusTitle.innerHTML = '⏳ होली आने में';
+            
+            messageTitle.innerHTML = 'होली की हार्दिक शुभकामनाएं';
+            messageContent.innerHTML = 'खुशियों से भर जाए आपकी झोली<br>आप सभी को मेरी तरफ से...<br>HAPPY HOLI IN ADVANCE';
+            messageFooter.innerHTML = '🌈🎨💧';
+        } 
+        else if (now < HOLI_END) {
+            timerDisplay.innerHTML = '🌈 रंग बरसे 🌈';
+            statusTitle.innerHTML = '🎉 होली 2026 🎉';
+            
+            messageTitle.innerHTML = 'होली मुबारक हो!';
+            messageContent.innerHTML = 'आपको और आपके परिवार को<br>रंगों भरी होली की हार्दिक शुभकामनाएं<br>हैप्पी होली! 🎨🌸';
+            messageFooter.innerHTML = '🌈🎉🎊';
+        } 
+        else {
+            timerDisplay.innerHTML = '🌸 अगली होली 🌸';
+            statusTitle.innerHTML = 'होली समाप्त';
+            
+            messageTitle.innerHTML = 'अगली होली तक...';
+            messageContent.innerHTML = 'इस बार की होली तो बीत गई<br>अगली होली पर फिर मिलेंगे';
+            messageFooter.innerHTML = '🌸💧🎨';
+        }
+    }
+    setInterval(updateTimerAndMessage, 1000); 
+    updateTimerAndMessage();
+
+    // गिफ्ट मोडल
+    window.openGiftModal = function() {
+        document.getElementById('giftModal').style.display = 'flex';
+        for (let i=0; i<25; i++) setTimeout(() => {
+            let e = document.createElement('div');
+            e.innerText = ['🍬','🍭','🧁','🎊','🥳','🌈','🌸','🎨'][i%8];
+            e.style.position='fixed'; 
+            e.style.left=Math.random()*100+'%'; 
+            e.style.top=Math.random()*100+'%';
+            e.style.fontSize=(2.5+Math.random()*3)+'rem'; 
+            e.style.zIndex='21000'; 
+            e.style.pointerEvents='none';
+            e.style.transition='all 2s'; 
+            e.style.filter='drop-shadow(0 0 20px gold)';
+            document.body.appendChild(e);
+            setTimeout(() => { 
+                e.style.opacity='0'; 
+                e.style.transform='scale(6) rotate(720deg)'; 
+            }, 50);
+            setTimeout(() => e.remove(), 2000);
+        }, i*25);
+    };
+    
+    window.closeGiftModal = function() { 
+        document.getElementById('giftModal').style.display = 'none'; 
+    };
+
+    // म्यूजिक कंट्रोल
+    const audio = document.getElementById('holiAudio');
+    const musicBtn = document.getElementById('musicPlayBtn');
+    
+    musicBtn.addEventListener('click', function() {
+        if (audio.paused) {
+            audio.play().then(() => {
+                this.innerHTML = '🔊 बज रहा';
+            }).catch(() => alert('प्ले करने में समस्या हुई'));
+        } else {
+            audio.pause();
+            this.innerHTML = '🎵 होली गीत बजाएं';
+        }
+    });
+
+    // शेयर फंक्शन
+    window.createShareLink = function() {
+        let n = document.getElementById('userNameInput').value.trim();
+        if (!n) { 
+            alert('नाम लिखें'); 
+            return; 
+        }
+        let link = window.location.origin + window.location.pathname + '?name=' + encodeURIComponent(n);
+        document.getElementById('shareLinkDisplay').innerHTML = 
+            `<span style="font-size:2rem; word-break:break-all; background:white; padding:1rem 2rem; border-radius:60px; border:2px solid #ec4e7a;">${link}</span>`;
+        
+        document.getElementById('whatsappShareBtn').onclick = function() {
+            window.open(`https://wa.me/?text=${encodeURIComponent('🌸 होली की हार्दिक शुभकामनाएं! यह मेरा विशिंग पेज है: ' + link)}`, '_blank');
+        };
+    };
+    
+    // फ्लोटिंग व्हाट्सएप बटन
+    document.getElementById('floatingWhatsappBtn').addEventListener('click', function() {
+        let name = document.getElementById('floatingNameInput').value.trim();
+        let link = window.location.href;
+        if (name) {
+            link = window.location.origin + window.location.pathname + '?name=' + encodeURIComponent(name);
+        }
+        window.open(`https://wa.me/?text=${encodeURIComponent('🌸 होली की हार्दिक शुभकामनाएं! यह मेरा विशिंग पेज है: ' + link)}`, '_blank');
+    });
+    
+    document.getElementById('floatingShareBtn').addEventListener('click', function() {
+        let name = document.getElementById('floatingNameInput').value.trim();
+        let link = window.location.href;
+        if (name) {
+            link = window.location.origin + window.location.pathname + '?name=' + encodeURIComponent(name);
+        }
+        window.open(`https://wa.me/?text=${encodeURIComponent('🌸 होली की हार्दिक शुभकामनाएं! यह मेरा विशिंग पेज है: ' + link)}`, '_blank');
+    });
+    
+    document.getElementById('whatsappShareBtn').addEventListener('click', function() {
+        let link = window.location.href;
+        window.open(`https://wa.me/?text=${encodeURIComponent('🌸 होली की हार्दिक शुभकामनाएं! देखिए यह खूबसूरत विशिंग पेज: ' + link)}`, '_blank');
+    });
+
+    // UPI पेमेंट फंक्शन
+    window.payViaUPI = function(upiId, amount) {
+        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        const yourName = encodeURIComponent("Renuka Devi");
+        const note = encodeURIComponent("होली 2026 सपोर्ट");
+        const upiUrl = `upi://pay?pa=${upiId}&pn=${yourName}&am=${amount}&cu=INR&tn=${note}`;
+        
+        if (isMobile) {
+            // मोबाइल पर परमिशन लेकर UPI ऐप खोलें
+            if (confirm("UPI ऐप खोलने की अनुमति दें?")) {
+                window.location.href = upiUrl;
+                setTimeout(function() {
+                    if (!document.hidden) {
+                        alert("कृपया अपना UPI ऐप (Google Pay, PhonePe, Paytm) इंस्टॉल करें");
+                    }
+                }, 2000);
+            }
+        } else {
+            alert("कृपया QR कोड स्कैन करें या मोबाइल से खोलें");
+        }
+    };
+
+    // कस्टम अमाउंट पेमेंट
+    window.payCustomAmount = function() {
+        const amount = document.getElementById('customAmount').value;
+        if (!amount || amount < 1) {
+            alert("कृपया सही राशि डालें");
+            return;
+        }
+        payViaUPI('renudevi9984@ybl', amount);
+    };
+
+    // QR कोड स्कैन फंक्शन
+    window.scanQRCode = function() {
+        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        if (isMobile) {
+            if (confirm("UPI ऐप खोलकर QR कोड स्कैन करें?")) {
+                // UPI ऐप खोलें
+                window.location.href = `upi://pay?pa=renudevi9984@ybl&pn=Renuka%20Devi&cu=INR`;
+            }
+        } else {
+            alert("QR कोड डाउनलोड करने के लिए राइट क्लिक करें और सेव करें");
+        }
+    };
+
+    // UPI ऐप खोलने का फंक्शन
+    window.openUPIApp = function(app) {
+        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        if (!isMobile) {
+            alert("कृपया मोबाइल से खोलें");
+            return;
+        }
+        
+        let appUrl = '';
+        const upiData = `pa=renudevi9984@ybl&pn=Renuka%20Devi&cu=INR`;
+        
+        switch(app) {
+            case 'gpay':
+                appUrl = `tez://upi/pay?${upiData}`;
+                break;
+            case 'phonepe':
+                appUrl = `phonepe://pay?${upiData}`;
+                break;
+            case 'paytm':
+                appUrl = `paytmmp://pay?${upiData}`;
+                break;
+            case 'amazonpay':
+                appUrl = `amazonpay://upi?${upiData}`;
+                break;
+            default:
+                appUrl = `upi://pay?${upiData}`;
+        }
+        
+        if (confirm(`${app} ऐप खोलने की अनुमति दें?`)) {
+            window.location.href = appUrl;
+        }
+    };
+
+    // इमोजी रनर
+    const antC = document.getElementById('antContainer');
+    const emojiList = ['🔫','🌈','🧴','🍬','💦','🌸','🎨','🪅','🎊','🥳','🧁','🍭','💧','🎈'];
+    
+    for (let i=0; i<25; i++) { 
+        let a = document.createElement('div'); 
+        a.className = 'ant-emoji'; 
+        a.textContent = emojiList[i % emojiList.length]; 
+        antC.appendChild(a); 
+    }
+    
+    function moveAnts() {
+        let ants = document.querySelectorAll('.ant-emoji');
+        let w = window.innerWidth;
+        let h = window.innerHeight;
+        let perimeter = 2 * (w + h);
+        let time = Date.now() / 900;
+        let margin = 10;
+        
+        ants.forEach((ant, i) => { 
+            let offset = (i * 0.03 * perimeter) % perimeter;
+            let pos = (time * 40 + offset) % perimeter;
+            let x, y;
+            
+            if (pos < w) { x = pos; y = margin; }
+            else if (pos < w + h) { x = w - margin; y = pos - w; }
+            else if (pos < 2 * w + h) { x = 2 * w + h - pos; y = h - margin; }
+            else { x = margin; y = perimeter - pos; }
+            
+            ant.style.left = x + 'px';
+            ant.style.top = y + 'px';
+        });
+        requestAnimationFrame(moveAnts);
+    }
+    moveAnts();
+
+    document.getElementById('userNameInput').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            createShareLink();
+        }
+    });
+
+    // एड रिफ्रेश
+    try {
+        (adsbygoogle = window.adsbygoogle || []).push({});
+    } catch (e) {}
+})();
+</script>
+</body>
+</html>
