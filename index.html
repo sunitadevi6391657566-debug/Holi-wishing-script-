@@ -915,6 +915,8 @@ body.site-visible #mainSite { opacity: 1; }
 }
 </style>
 </head>
+<body>
+
 <!-- पर्दा (कर्टेन) - MP3 गाने के साथ (शुरू से प्ले) -->
 <div id="curtain">
     <div class="curtain-panel left"></div>
@@ -939,6 +941,7 @@ body.site-visible #mainSite { opacity: 1; }
         </div>
     </div>
 </div>
+
 <!-- इमोजी रनर - पतली लाइन (9px) -->
 <div class="ant-boundary" id="antContainer"></div>
 
@@ -1260,290 +1263,7 @@ body.site-visible #mainSite { opacity: 1; }
     </div>
 </div>
 
-<!-- ऑडियो एलिमेंट -->
-<audio id="holiAudio" loop preload="auto">
-    <source src="https://raw.githubusercontent.com/sunitadevi6391657566-debug/Holi-wishing-script-/main/holi-song.mp3" type="audio/mpeg">
-    आपका ब्राउज़र ऑडियो एलिमेंट सपोर्ट नहीं करता।
-</audio>
-<script>
-(function() {
-    const HOLI_START = new Date('2026-03-04T00:00:00+05:30').getTime();
-    const HOLI_END = new Date('2026-03-05T00:00:00+05:30').getTime();
-    const urlParams = new URLSearchParams(window.location.search);
-    let userName = urlParams.get('name') ? decodeURIComponent(urlParams.get('name')).trim() : '';
-
-    const senderNameDisplay = document.getElementById('senderNameDisplay');
-    if (userName) {
-        senderNameDisplay.innerText = userName;
-        document.title = `${userName} की होली`;
-    } else {
-        senderNameDisplay.innerText = 'आपका परिवार';
-    }
-
-    // कर्टेन
-    document.getElementById('curtain-center').addEventListener('click', function() {
-        document.querySelector('.left').classList.add('open-left');
-        document.querySelector('.right').classList.add('open-right');
-        
-        setTimeout(() => {
-            document.getElementById('curtain').style.display = 'none';
-            document.body.classList.add('site-visible');
-        }, 300);
-        
-        const audio = document.getElementById('holiAudio');
-        audio.play().catch(e => console.log('ऑटोप्ले ब्लॉक हुआ', e));
-    });
-
-    // टाइमर और मैसेज अपडेट
-    const statusTitle = document.getElementById('statusTitle');
-    const timerDisplay = document.getElementById('timerDisplay');
-    const messageTitle = document.getElementById('messageTitle');
-    const messageContent = document.getElementById('messageContent');
-    const messageFooter = document.getElementById('messageFooter');
-    
-    function updateTimerAndMessage() {
-        const now = Date.now();
-        
-        if (now < HOLI_START) {
-            let d = HOLI_START - now;
-            let days = Math.floor(d/(86400000)), 
-                hrs = Math.floor((d%86400000)/3600000), 
-                min = Math.floor((d%3600000)/60000), 
-                sec = Math.floor((d%60000)/1000);
-            timerDisplay.innerHTML = `${days} दिन : ${hrs} घंटे : ${min} मिनट : ${sec} सेकंड`;
-            statusTitle.innerHTML = '⏳ होली आने में';
-            
-            messageTitle.innerHTML = 'होली की हार्दिक शुभकामनाएं';
-            messageContent.innerHTML = 'खुशियों से भर जाए आपकी झोली<br>आप सभी को मेरी तरफ से...<br>HAPPY HOLI IN ADVANCE';
-            messageFooter.innerHTML = '🌈🎨💧';
-        } 
-        else if (now < HOLI_END) {
-            timerDisplay.innerHTML = '🌈 रंग बरसे 🌈';
-            statusTitle.innerHTML = '🎉 होली 2026 🎉';
-            
-            messageTitle.innerHTML = 'होली मुबारक हो!';
-            messageContent.innerHTML = 'आपको और आपके परिवार को<br>रंगों भरी होली की हार्दिक शुभकामनाएं<br>हैप्पी होली! 🎨🌸';
-            messageFooter.innerHTML = '🌈🎉🎊';
-        } 
-        else {
-            timerDisplay.innerHTML = '🌸 अगली होली 🌸';
-            statusTitle.innerHTML = 'होली समाप्त';
-            
-            messageTitle.innerHTML = 'अगली होली तक...';
-            messageContent.innerHTML = 'इस बार की होली तो बीत गई<br>अगली होली पर फिर मिलेंगे';
-            messageFooter.innerHTML = '🌸💧🎨';
-        }
-    }
-    setInterval(updateTimerAndMessage, 1000); 
-    updateTimerAndMessage();
-
-    // गिफ्ट मोडल
-    window.openGiftModal = function() {
-        document.getElementById('giftModal').style.display = 'flex';
-        for (let i=0; i<25; i++) setTimeout(() => {
-            let e = document.createElement('div');
-            e.innerText = ['🍬','🍭','🧁','🎊','🥳','🌈','🌸','🎨'][i%8];
-            e.style.position='fixed'; 
-            e.style.left=Math.random()*100+'%'; 
-            e.style.top=Math.random()*100+'%';
-            e.style.fontSize=(2.5+Math.random()*3)+'rem'; 
-            e.style.zIndex='21000'; 
-            e.style.pointerEvents='none';
-            e.style.transition='all 2s'; 
-            e.style.filter='drop-shadow(0 0 20px gold)';
-            document.body.appendChild(e);
-            setTimeout(() => { 
-                e.style.opacity='0'; 
-                e.style.transform='scale(6) rotate(720deg)'; 
-            }, 50);
-            setTimeout(() => e.remove(), 2000);
-        }, i*25);
-    };
-    
-    window.closeGiftModal = function() { 
-        document.getElementById('giftModal').style.display = 'none'; 
-    };
-
-    // म्यूजिक कंट्रोल
-    const audio = document.getElementById('holiAudio');
-    const musicBtn = document.getElementById('musicPlayBtn');
-    
-    musicBtn.addEventListener('click', function() {
-        if (audio.paused) {
-            audio.play().then(() => {
-                this.innerHTML = '🔊 बज रहा';
-            }).catch(() => alert('प्ले करने में समस्या हुई'));
-        } else {
-            audio.pause();
-            this.innerHTML = '🎵 होली गीत बजाएं';
-        }
-    });
-
-    // शेयर फंक्शन
-    window.createShareLink = function() {
-        let n = document.getElementById('userNameInput').value.trim();
-        if (!n) { 
-            alert('नाम लिखें'); 
-            return; 
-        }
-        let link = window.location.origin + window.location.pathname + '?name=' + encodeURIComponent(n);
-        document.getElementById('shareLinkDisplay').innerHTML = 
-            `<span style="font-size:2rem; word-break:break-all; background:white; padding:1rem 2rem; border-radius:60px; border:2px solid #ec4e7a;">${link}</span>`;
-        
-        document.getElementById('whatsappShareBtn').onclick = function() {
-            window.open(`https://wa.me/?text=${encodeURIComponent('🌸 होली की हार्दिक शुभकामनाएं! यह मेरा विशिंग पेज है: ' + link)}`, '_blank');
-        };
-    };
-    
-    // फ्लोटिंग व्हाट्सएप बटन
-    document.getElementById('floatingWhatsappBtn').addEventListener('click', function() {
-        let name = document.getElementById('floatingNameInput').value.trim();
-        let link = window.location.href;
-        if (name) {
-            link = window.location.origin + window.location.pathname + '?name=' + encodeURIComponent(name);
-        }
-        window.open(`https://wa.me/?text=${encodeURIComponent('🌸 होली की हार्दिक शुभकामनाएं! यह मेरा विशिंग पेज है: ' + link)}`, '_blank');
-    });
-    
-    document.getElementById('floatingShareBtn').addEventListener('click', function() {
-        let name = document.getElementById('floatingNameInput').value.trim();
-        let link = window.location.href;
-        if (name) {
-            link = window.location.origin + window.location.pathname + '?name=' + encodeURIComponent(name);
-        }
-        window.open(`https://wa.me/?text=${encodeURIComponent('🌸 होली की हार्दिक शुभकामनाएं! यह मेरा विशिंग पेज है: ' + link)}`, '_blank');
-    });
-    
-    document.getElementById('whatsappShareBtn').addEventListener('click', function() {
-        let link = window.location.href;
-        window.open(`https://wa.me/?text=${encodeURIComponent('🌸 होली की हार्दिक शुभकामनाएं! देखिए यह खूबसूरत विशिंग पेज: ' + link)}`, '_blank');
-    });
-
-    // UPI पेमेंट फंक्शन
-    window.payViaUPI = function(upiId, amount) {
-        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-        const yourName = encodeURIComponent("Renuka Devi");
-        const note = encodeURIComponent("होली 2026 सपोर्ट");
-        const upiUrl = `upi://pay?pa=${upiId}&pn=${yourName}&am=${amount}&cu=INR&tn=${note}`;
-        
-        if (isMobile) {
-            // मोबाइल पर परमिशन लेकर UPI ऐप खोलें
-            if (confirm("UPI ऐप खोलने की अनुमति दें?")) {
-                window.location.href = upiUrl;
-                setTimeout(function() {
-                    if (!document.hidden) {
-                        alert("कृपया अपना UPI ऐप (Google Pay, PhonePe, Paytm) इंस्टॉल करें");
-                    }
-                }, 2000);
-            }
-        } else {
-            alert("कृपया QR कोड स्कैन करें या मोबाइल से खोलें");
-        }
-    };
-
-    // कस्टम अमाउंट पेमेंट
-    window.payCustomAmount = function() {
-        const amount = document.getElementById('customAmount').value;
-        if (!amount || amount < 1) {
-            alert("कृपया सही राशि डालें");
-            return;
-        }
-        payViaUPI('renudevi9984@ybl', amount);
-    };
-
-    // QR कोड स्कैन फंक्शन
-    window.scanQRCode = function() {
-        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-        if (isMobile) {
-            if (confirm("UPI ऐप खोलकर QR कोड स्कैन करें?")) {
-                // UPI ऐप खोलें
-                window.location.href = `upi://pay?pa=renudevi9984@ybl&pn=Renuka%20Devi&cu=INR`;
-            }
-        } else {
-            alert("QR कोड डाउनलोड करने के लिए राइट क्लिक करें और सेव करें");
-        }
-    };
-
-    // UPI ऐप खोलने का फंक्शन
-    window.openUPIApp = function(app) {
-        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-        if (!isMobile) {
-            alert("कृपया मोबाइल से खोलें");
-            return;
-        }
-        
-        let appUrl = '';
-        const upiData = `pa=renudevi9984@ybl&pn=Renuka%20Devi&cu=INR`;
-        
-        switch(app) {
-            case 'gpay':
-                appUrl = `tez://upi/pay?${upiData}`;
-                break;
-            case 'phonepe':
-                appUrl = `phonepe://pay?${upiData}`;
-                break;
-            case 'paytm':
-                appUrl = `paytmmp://pay?${upiData}`;
-                break;
-            case 'amazonpay':
-                appUrl = `amazonpay://upi?${upiData}`;
-                break;
-            default:
-                appUrl = `upi://pay?${upiData}`;
-        }
-        
-        if (confirm(`${app} ऐप खोलने की अनुमति दें?`)) {
-            window.location.href = appUrl;
-        }
-    };
-
-    // इमोजी रनर
-    const antC = document.getElementById('antContainer');
-    const emojiList = ['🔫','🌈','🧴','🍬','💦','🌸','🎨','🪅','🎊','🥳','🧁','🍭','💧','🎈'];
-    
-    for (let i=0; i<25; i++) { 
-        let a = document.createElement('div'); 
-        a.className = 'ant-emoji'; 
-        a.textContent = emojiList[i % emojiList.length]; 
-        antC.appendChild(a); 
-    }
-    
-    function moveAnts() {
-        let ants = document.querySelectorAll('.ant-emoji');
-        let w = window.innerWidth;
-        let h = window.innerHeight;
-        let perimeter = 2 * (w + h);
-        let time = Date.now() / 900;
-        let margin = 10;
-        
-        ants.forEach((ant, i) => { 
-            let offset = (i * 0.03 * perimeter) % perimeter;
-            let pos = (time * 40 + offset) % perimeter;
-            let x, y;
-            
-            if (pos < w) { x = pos; y = margin; }
-            else if (pos < w + h) { x = w - margin; y = pos - w; }
-            else if (pos < 2 * w + h) { x = 2 * w + h - pos; y = h - margin; }
-            else { x = margin; y = perimeter - pos; }
-            
-            ant.style.left = x + 'px';
-            ant.style.top = y + 'px';
-        });
-        requestAnimationFrame(moveAnts);
-    }
-    moveAnts();
-
-    document.getElementById('userNameInput').addEventListener('keypress', function(e) {
-        if (e.key === 'Enter') {
-            createShareLink();
-        }
-    });
-
-    // एड रिफ्रेश
-    try {
-        (adsbygoogle = window.adsbygoogle || []).push({});
-    } catch (e) {}
-})();
+<!-- सिंगल जावास्क्रिप्ट (दो नहीं) -->
 <script>
 (function() {
     const HOLI_START = new Date('2026-03-04T00:00:00+05:30').getTime();
@@ -1565,7 +1285,7 @@ body.site-visible #mainSite { opacity: 1; }
     // पेज लोड होते ही गाना प्रीलोड करें
     if (audio) {
         audio.load();
-        audio.volume = 0.7; // आवाज 70% पर सेट करें
+        audio.volume = 0.7;
     }
     
     // पर्दा खुलने पर गाना चलाएं
@@ -1575,7 +1295,7 @@ body.site-visible #mainSite { opacity: 1; }
         
         // गाना शुरू से चलाएं
         if (audio) {
-            audio.currentTime = 0; // शुरू सेट करें
+            audio.currentTime = 0;
             audio.play().catch(e => console.log('गाना चलाने में दिक्कत', e));
         }
         
@@ -1681,6 +1401,82 @@ body.site-visible #mainSite { opacity: 1; }
         window.open(`https://wa.me/?text=${encodeURIComponent('🌸 होली की हार्दिक शुभकामनाएं! देखिए यह खूबसूरत विशिंग पेज: ' + link)}`, '_blank');
     });
 
+    // UPI पेमेंट फंक्शन
+    window.payViaUPI = function(upiId, amount) {
+        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        const yourName = encodeURIComponent("Renuka Devi");
+        const note = encodeURIComponent("होली 2026 सपोर्ट");
+        const upiUrl = `upi://pay?pa=${upiId}&pn=${yourName}&am=${amount}&cu=INR&tn=${note}`;
+        
+        if (isMobile) {
+            if (confirm("UPI ऐप खोलने की अनुमति दें?")) {
+                window.location.href = upiUrl;
+                setTimeout(function() {
+                    if (!document.hidden) {
+                        alert("कृपया अपना UPI ऐप (Google Pay, PhonePe, Paytm) इंस्टॉल करें");
+                    }
+                }, 2000);
+            }
+        } else {
+            alert("कृपया QR कोड स्कैन करें या मोबाइल से खोलें");
+        }
+    };
+
+    // कस्टम अमाउंट पेमेंट
+    window.payCustomAmount = function() {
+        const amount = document.getElementById('customAmount').value;
+        if (!amount || amount < 1) {
+            alert("कृपया सही राशि डालें");
+            return;
+        }
+        payViaUPI('renudevi9984@ybl', amount);
+    };
+
+    // QR कोड स्कैन फंक्शन
+    window.scanQRCode = function() {
+        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        if (isMobile) {
+            if (confirm("UPI ऐप खोलकर QR कोड स्कैन करें?")) {
+                window.location.href = `upi://pay?pa=renudevi9984@ybl&pn=Renuka%20Devi&cu=INR`;
+            }
+        } else {
+            alert("QR कोड डाउनलोड करने के लिए राइट क्लिक करें और सेव करें");
+        }
+    };
+
+    // UPI ऐप खोलने का फंक्शन
+    window.openUPIApp = function(app) {
+        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        if (!isMobile) {
+            alert("कृपया मोबाइल से खोलें");
+            return;
+        }
+        
+        let appUrl = '';
+        const upiData = `pa=renudevi9984@ybl&pn=Renuka%20Devi&cu=INR`;
+        
+        switch(app) {
+            case 'gpay':
+                appUrl = `tez://upi/pay?${upiData}`;
+                break;
+            case 'phonepe':
+                appUrl = `phonepe://pay?${upiData}`;
+                break;
+            case 'paytm':
+                appUrl = `paytmmp://pay?${upiData}`;
+                break;
+            case 'amazonpay':
+                appUrl = `amazonpay://upi?${upiData}`;
+                break;
+            default:
+                appUrl = `upi://pay?${upiData}`;
+        }
+        
+        if (confirm(`${app} ऐप खोलने की अनुमति दें?`)) {
+            window.location.href = appUrl;
+        }
+    };
+
     // इमोजी रनर
     const antC = document.getElementById('antContainer');
     const emojiList = ['🔫','🌈','🧴','🍬','💦','🌸','🎨','🪅','🎊','🥳','🧁','🍭','💧','🎈'];
@@ -1728,5 +1524,6 @@ body.site-visible #mainSite { opacity: 1; }
     } catch (e) {}
 })();
 </script>
+
 </body>
-</html>
+</html>.
