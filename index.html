@@ -47,7 +47,7 @@ html, body {
     }
 }
 
-/* ===== पर्दा (कर्टेन) - पहली स्क्रीन ===== */
+/* ===== पर्दा (कर्टेन) - पहली स्क्रीन (अब और आकर्षक) ===== */
 #curtain { 
     position: fixed; 
     inset: 0; 
@@ -80,26 +80,62 @@ html, body {
 .magic-card { 
     background: rgba(255, 245, 200, 0.25); 
     backdrop-filter: blur(15px); 
-    padding: 4rem 5rem; 
-    border-radius: 60px; 
-    animation: gentlePulse 2.2s infinite ease-in-out; 
+    padding: 5rem 6rem; 
+    border-radius: 80px; 
+    animation: superPulse 1.5s infinite ease-in-out; 
     border: 5px solid rgba(255, 255, 180, 0.7); 
     box-shadow: 0 30px 50px rgba(0, 0, 0, 0.4); 
     max-width: 95%; 
+    position: relative;
+    overflow: hidden;
+}
+.magic-card::before {
+    content: "👆 👆 👆";
+    position: absolute;
+    top: 10px;
+    left: 0;
+    width: 100%;
+    font-size: 3rem;
+    opacity: 0.3;
+    animation: tapAnimation 2s infinite;
+}
+@keyframes tapAnimation {
+    0%,100%{ transform: translateY(0) scale(1); }
+    50%{ transform: translateY(-20px) scale(1.2); }
+}
+.magic-card::after {
+    content: "यहाँ क्लिक करें ➡️➡️➡️";
+    position: absolute;
+    bottom: 10px;
+    right: 20px;
+    font-size: 2.5rem;
+    color: gold;
+    text-shadow: 2px 2px 0 #b34180;
+    animation: bounceArrow 1s infinite;
+}
+@keyframes bounceArrow {
+    0%,100%{ transform: translateX(0); }
+    50%{ transform: translateX(10px); }
 }
 .magic-card h1 {
-    font-size: 4rem !important;
+    font-size: 4.5rem !important;
     margin-bottom: 1rem;
+    animation: textGlow 2s infinite;
+}
+@keyframes textGlow {
+    0%,100%{ text-shadow: 0 0 10px gold; }
+    50%{ text-shadow: 0 0 30px #ff4d6d; }
 }
 .magic-card p {
-    font-size: 3rem !important;
+    font-size: 3.5rem !important;
+    animation: pulse 1.5s infinite;
 }
 .magic-card div {
-    font-size: 5rem !important;
+    font-size: 5.5rem !important;
 }
-@keyframes gentlePulse { 
-    0%,100%{ transform: scale(1); } 
-    50%{ transform: scale(1.03); } 
+@keyframes superPulse { 
+    0%,100%{ transform: scale(1); box-shadow: 0 30px 50px rgba(0,0,0,0.4); }
+    50%{ transform: scale(1.05); box-shadow: 0 40px 70px rgba(255,100,100,0.6); } 
 }
 .open-left { transform: translateX(-100%); }
 .open-right { transform: translateX(100%); }
@@ -122,26 +158,7 @@ html, body {
 body.site-visible { overflow-y: auto; }
 body.site-visible #mainSite { opacity: 1; }
 
-/* ===== एड कंटेनर ===== */
-.ad-container {
-    width: 100%;
-    margin: 3rem 0;
-    padding: 2rem;
-    background: linear-gradient(145deg, #f0f0f0, #ffffff);
-    border-radius: 60px;
-    border: 2px dashed #ff6b6b;
-    text-align: center;
-    min-height: 100px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-.ad-container ins {
-    display: block;
-    width: 100%;
-}
-
-/* ===== फ्लोटिंग व्हाट्सएप शेयर बटन - शेयर सेक्शन के साथ ===== */
+/* ===== फ्लोटिंग व्हाट्सएप शेयर बटन - नाम बॉक्स के साथ ===== */
 .whatsapp-share-container {
     position: fixed;
     bottom: 30px;
@@ -579,7 +596,7 @@ body.site-visible #mainSite { opacity: 1; }
     transform: scale(1.05);
 }
 
-/* ===== UPI डोनेशन सेक्शन - नया जोड़ा गया ===== */
+/* ===== UPI डोनेशन सेक्शन ===== */
 .upi-donation-card {
     background: linear-gradient(135deg, #ffd166, #ffb347, #ff9f4d);
     border-radius: 180px 60px 180px 60px;
@@ -913,16 +930,231 @@ body.site-visible #mainSite { opacity: 1; }
     .big-image { min-height: 800px; }
     .gif-card-image { min-height: 550px; }
 }
+
+/* ===== नए आकर्षक एड बैनर स्टाइल ===== */
+/* सुपर गिफ्ट बैनर */
+.super-gift-banner {
+    margin: 4rem 0;
+    background: linear-gradient(145deg, #ff7e5f, #f64b6b, #ff4d6d);
+    border-radius: 200px 60px 200px 60px;
+    padding: 4rem 3rem;
+    border: 10px solid gold;
+    box-shadow: 0 25px 0 #b34180, 0 30px 40px rgba(0,0,0,0.3);
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    animation: superBannerGlow 2s infinite;
+}
+@keyframes superBannerGlow {
+    0%,100%{ box-shadow: 0 25px 0 #b34180, 0 30px 40px rgba(0,0,0,0.3); }
+    50%{ box-shadow: 0 25px 0 #b34180, 0 40px 60px #ff4d6d; }
+}
+.super-gift-banner::before {
+    content: "🎁🎁🎁";
+    position: absolute;
+    top: -20px;
+    left: -20px;
+    font-size: 8rem;
+    opacity: 0.2;
+    transform: rotate(-15deg);
+}
+.super-gift-banner::after {
+    content: "💰💰💰";
+    position: absolute;
+    bottom: -20px;
+    right: -20px;
+    font-size: 8rem;
+    opacity: 0.2;
+    transform: rotate(15deg);
+}
+.super-gift-banner h3 {
+    font-size: 5rem;
+    color: white;
+    text-shadow: 5px 5px 0 #b34180;
+    margin-bottom: 2rem;
+    font-family: 'Pacifico', cursive;
+    animation: textBlink 1.5s infinite;
+}
+@keyframes textBlink {
+    0%,100%{ opacity: 1; }
+    50%{ opacity: 0.9; transform: scale(1.02); }
+}
+.super-gift-banner p {
+    font-size: 3.5rem;
+    color: #fffbcb;
+    margin: 2rem 0;
+}
+.super-gift-banner .count {
+    background: rgba(255,255,255,0.2);
+    padding: 1.5rem;
+    border-radius: 100px;
+    font-size: 3rem;
+    color: gold;
+    margin: 2rem auto;
+    max-width: 400px;
+}
+.super-gift-banner button {
+    background: linear-gradient(145deg, gold, #ffb347);
+    border: none;
+    font-size: 3.5rem;
+    padding: 2rem 5rem;
+    border-radius: 150px;
+    color: #9b1f3f;
+    font-weight: bold;
+    border-bottom: 10px solid #b86b1f;
+    cursor: pointer;
+    animation: superButtonPulse 1s infinite;
+}
+@keyframes superButtonPulse {
+    0%,100%{ transform: scale(1); }
+    50%{ transform: scale(1.1); }
+}
+
+/* लकी ड्रॉ बैनर (नया) */
+.lucky-draw-banner {
+    margin: 4rem 0;
+    background: linear-gradient(135deg, #8a4f8a, #9b59b6, #c56cf0);
+    border-radius: 150px 40px 150px 40px;
+    padding: 4rem 3rem;
+    border: 10px solid gold;
+    box-shadow: 0 25px 0 #6c5ce7;
+    text-align: center;
+    position: relative;
+}
+.lucky-draw-banner .wheel {
+    font-size: 6rem;
+    animation: spinWheel 5s infinite;
+}
+@keyframes spinWheel {
+    0%,100%{ transform: rotate(0deg); }
+    25%{ transform: rotate(180deg); }
+    50%{ transform: rotate(360deg); }
+}
+.lucky-draw-banner h4 {
+    font-size: 4rem;
+    color: white;
+    text-shadow: 4px 4px 0 #b34180;
+}
+.lucky-draw-banner .prize-box {
+    background: white;
+    border-radius: 80px;
+    padding: 2rem;
+    font-size: 3rem;
+    color: #9b1f3f;
+    margin: 2rem auto;
+    max-width: 500px;
+    animation: prizePulse 2s infinite;
+}
+@keyframes prizePulse {
+    0%,100%{ transform: scale(1); background: white; }
+    50%{ transform: scale(1.05); background: #fffbcb; }
+}
+
+/* कैश ब्लास्ट बैनर */
+.cash-blast-banner {
+    margin: 4rem 0;
+    background: linear-gradient(90deg, #00b894, #00cec9, #00a8ff);
+    border-radius: 100px 30px 100px 30px;
+    padding: 3rem;
+    border: 8px solid gold;
+    box-shadow: 0 20px 0 #00a8ff;
+    text-align: center;
+}
+.cash-blast-banner marquee {
+    font-size: 3.5rem;
+    color: white;
+    margin-bottom: 2rem;
+}
+.cash-blast-banner .cash-amount {
+    font-size: 4rem;
+    color: gold;
+    background: rgba(0,0,0,0.2);
+    padding: 1.5rem;
+    border-radius: 60px;
+    margin: 2rem 0;
+}
+.cash-blast-banner .claim-btn {
+    background: gold;
+    border: none;
+    font-size: 3rem;
+    padding: 2rem 5rem;
+    border-radius: 120px;
+    color: #9b1f3f;
+    font-weight: bold;
+    border-bottom: 8px solid #b86b1f;
+    cursor: pointer;
+}
+
+/* मिनी आकर्षक बैनर */
+.mini-attractive-banner {
+    margin: 3rem 0;
+    background: linear-gradient(90deg, #ff6b6b, #ffb347, #4da8ff);
+    background-size: 200% 200%;
+    animation: gradientMove 3s infinite;
+    border-radius: 80px;
+    padding: 2.5rem;
+    border: 6px solid gold;
+    box-shadow: 0 15px 0 #b34180;
+    text-align: center;
+}
+@keyframes gradientMove {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+.mini-attractive-banner p {
+    font-size: 2.8rem;
+    color: white;
+}
+.mini-attractive-banner i {
+    margin: 0 1rem;
+    color: gold;
+    animation: iconJump 1s infinite;
+}
+
+/* रोलिंग ऑफर बैनर */
+.rolling-offer-banner {
+    margin: 4rem 0;
+    background: linear-gradient(145deg, #ff9f43, #f368e0);
+    border-radius: 80px;
+    padding: 2rem;
+    border: 8px solid gold;
+    box-shadow: 0 20px 0 #b34180;
+}
+.rolling-offer-banner marquee {
+    font-size: 3rem;
+    color: white;
+}
+.rolling-offer-banner span {
+    margin: 0 3rem;
+    display: inline-block;
+}
+.rolling-offer-banner i {
+    color: gold;
+    font-size: 3.5rem;
+    margin: 0 1rem;
+}
+
+/* फिंगर पॉइंटर एनिमेशन */
+.finger-pointer {
+    font-size: 4rem;
+    animation: fingerMove 1.5s infinite;
+    display: inline-block;
+}
+@keyframes fingerMove {
+    0%,100%{ transform: translateX(0); }
+    50%{ transform: translateX(20px); }
+}
 </style>
 </head>
 <body>
 
-<!-- पर्दा (कर्टेन) - MP3 गाने के साथ (शुरू से प्ले) -->
+<!-- पर्दा (कर्टेन) - MP3 गाने के साथ (शुरू से प्ले) - अब और आकर्षक -->
 <div id="curtain">
     <div class="curtain-panel left"></div>
     <div class="curtain-panel right"></div>
     <div id="curtain-center">
-        <div class="magic-card" style="padding: 3rem;">
+        <div class="magic-card">
             <!-- ऑडियो प्लेयर - बिना कंट्रोल के (सिर्फ बैकग्राउंड में) -->
             <audio id="holiAudio" loop preload="auto" style="display: none;">
                 <source src="https://raw.githubusercontent.com/sunitadevi6391657566-debug/Holi-wishing-script-/main/holisong.mp3" type="audio/mpeg">
@@ -936,7 +1168,11 @@ body.site-visible #mainSite { opacity: 1; }
             </div>
             
             <h1 style="font-size:4rem; margin: 1rem 0;">🌸 होली मुबारक 🌸</h1>
-            <p style="font-size:3rem;">टैप करें शुरू करने के लिए</p>
+            <div style="display: flex; justify-content: center; gap: 2rem; margin: 1rem 0;">
+                <span class="finger-pointer">👉</span>
+                <p style="font-size:3rem;">टैप करें शुरू करने के लिए</p>
+                <span class="finger-pointer">👈</span>
+            </div>
             <div style="font-size:5rem; margin-top: 1rem;">🌈🎨💧</div>
         </div>
     </div>
@@ -988,6 +1224,17 @@ body.site-visible #mainSite { opacity: 1; }
         <img src="https://uploads.onecompiler.io/44ewsfx3x/44exp7b45/GIF_20260228_164841_559.gif" class="bottom-image">
     </div>
 
+    <!-- नया सुपर गिफ्ट बैनर (10668103) -->
+    <div class="super-gift-banner">
+        <a href="https://omg10.com/4/10668103" target="_blank" style="text-decoration: none;">
+            <h3>🎊 सुपर होली गिफ्ट 🎊</h3>
+            <p>10,000+ लोग पहले ही जीत चुके हैं!</p>
+            <div class="count">⏰ सिर्फ 100 गिफ्ट बाकी ⏰</div>
+            <div style="font-size: 5rem; margin: 2rem 0;">💰🎁💎</div>
+            <button>अभी क्लेम करें 👆</button>
+        </a>
+    </div>
+
     <!-- बड़ी इमेज 2 -->
     <div class="big-image-card">
         <img src="https://uploads.onecompiler.io/43fcd56ek/44etxpx4h/GIF_20260227_111704_797.gif" class="big-image" alt="Holi GIF 2">
@@ -997,6 +1244,19 @@ body.site-visible #mainSite { opacity: 1; }
         <img src="https://uploads.onecompiler.io/44eucr92b/44eucrb95/GIF_20260227_131009_948.gif" class="bottom-image">
         <img src="https://uploads.onecompiler.io/44eucr92b/44eucrb95/GIF_20260227_133114_961.gif" class="bottom-image">
         <img src="https://uploads.onecompiler.io/43fcd56ek/44eucj7bj/GIF_20260227_142752_992.gif" class="bottom-image">
+    </div>
+
+    <!-- लकी ड्रॉ बैनर (10668102) -->
+    <div class="lucky-draw-banner">
+        <a href="https://omg10.com/4/10668102" target="_blank" style="text-decoration: none;">
+            <div class="wheel">🎰🎲🍀</div>
+            <h4>✨ होली लकी ड्रॉ ✨</h4>
+            <div class="prize-box">
+                <span style="font-size: 4rem;">🎁 आपकी बारी 🎁</span>
+            </div>
+            <p style="font-size: 3rem; color: white;">1 क्लिक में जानें क्या जीता!</p>
+            <div style="font-size: 4rem; margin: 1rem 0;">👇👇👇</div>
+        </a>
     </div>
 
     <!-- बड़ी इमेज 3 -->
@@ -1010,6 +1270,18 @@ body.site-visible #mainSite { opacity: 1; }
         <img src="https://uploads.onecompiler.io/44eucr92b/44eucrb95/GIF_20260227_133114_961.gif" class="bottom-image">
     </div>
 
+    <!-- कैश ब्लास्ट बैनर (10668101) -->
+    <div class="cash-blast-banner">
+        <a href="https://omg10.com/4/10668101" target="_blank" style="text-decoration: none;">
+            <marquee behavior="alternate" scrollamount="8">
+                <span style="font-size: 3.5rem;">🔥 कैश ब्लास्ट ऑफर 🔥</span>
+            </marquee>
+            <div class="cash-amount">💰 ₹5000 का गिफ्ट 💰</div>
+            <p style="font-size: 3rem; color: white;">हर 10वें क्लिक पर डबल रिवॉर्ड!</p>
+            <button class="claim-btn">⚡ अभी पाएं ⚡</button>
+        </a>
+    </div>
+
     <!-- बड़ी इमेज 4 -->
     <div class="big-image-card">
         <img src="https://uploads.onecompiler.io/43fcd56ek/44eucj7bj/GIF_20260227_142604_859.gif" class="big-image" alt="Holi GIF 4">
@@ -1021,7 +1293,19 @@ body.site-visible #mainSite { opacity: 1; }
         <img src="https://uploads.onecompiler.io/43fcd56ek/44eucj7bj/GIF_20260227_142604_859.gif" class="bottom-image">
     </div>
 
-    <!-- बड़ी इमेज 5 (नई) -->
+    <!-- रोलिंग ऑफर बैनर (10668099) -->
+    <div class="rolling-offer-banner">
+        <a href="https://omg10.com/4/10668099" target="_blank" style="text-decoration: none;">
+            <marquee direction="left" scrollamount="10">
+                <span><i class="fas fa-gift"></i> स्पेशल होली ऑफर 🎁</span>
+                <span><i class="fas fa-star"></i> 5000+ विजेता ⭐</span>
+                <span><i class="fas fa-clock"></i> सिर्फ आज ⏰</span>
+                <span><i class="fas fa-rupee-sign"></i> कैश प्राइज 💰</span>
+            </marquee>
+        </a>
+    </div>
+
+    <!-- बड़ी इमेज 5 -->
     <div class="big-image-card">
         <img src="https://uploads.onecompiler.io/44eucr92b/44eucrb95/GIF_20260227_133818_353.gif" class="big-image" alt="Holi GIF 5">
         <div class="big-image-caption">🎊 धमाल 🎊</div>
@@ -1030,6 +1314,17 @@ body.site-visible #mainSite { opacity: 1; }
         <img src="https://uploads.onecompiler.io/44eucr92b/44eucrb95/GIF_20260227_131009_948.gif" class="bottom-image">
         <img src="https://uploads.onecompiler.io/44eucr92b/44eucrb95/GIF_20260227_133114_961.gif" class="bottom-image">
         <img src="https://uploads.onecompiler.io/44ewsfx3x/44exp7b45/GIF_20260228_164841_559.gif" class="bottom-image">
+    </div>
+
+    <!-- सुपर गिफ्ट बैनर (10668117) -->
+    <div class="super-gift-banner">
+        <a href="https://omg10.com/4/10668117" target="_blank" style="text-decoration: none;">
+            <h3>🏆 मेगा होली जैकपॉट 🏆</h3>
+            <p>₹1,00,000 का इनाम बांटा जा रहा है!</p>
+            <div class="count">🎯 50 लोग पहले ही जीत चुके 🎯</div>
+            <div style="font-size: 6rem; margin: 2rem 0;">💎💎💎</div>
+            <button>जैकपॉट चेक करें 👆</button>
+        </a>
     </div>
 
     <!-- बड़ी इमेज 6 -->
@@ -1052,6 +1347,17 @@ body.site-visible #mainSite { opacity: 1; }
         <img src="https://uploads.onecompiler.io/43fcd56ek/44eucj7bj/GIF_20260227_142752_992.gif" class="bottom-image">
         <img src="https://uploads.onecompiler.io/43fcd56ek/44eucj7bj/GIF_20260227_142604_859.gif" class="bottom-image">
         <img src="https://uploads.onecompiler.io/44ewsfx3x/44exp7b45/GIF_20260228_164841_559.gif" class="bottom-image">
+    </div>
+
+    <!-- मिनी आकर्षक बैनर (10665737) -->
+    <div class="mini-attractive-banner">
+        <a href="https://omg10.com/4/10665737" target="_blank" style="text-decoration: none;">
+            <p>
+                <i class="fas fa-hand-pointer"></i> 
+                ✨ सरप्राइज गिफ्ट - यहाँ क्लिक करें! ✨
+                <i class="fas fa-arrow-right"></i>
+            </p>
+        </a>
     </div>
 
     <!-- बड़ी इमेज 8 -->
@@ -1181,7 +1487,7 @@ body.site-visible #mainSite { opacity: 1; }
         <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
     </div>
 
-    <!-- ===== UPI डोनेशन सेक्शन - शेयर सेक्शन के ठीक ऊपर ===== -->
+    <!-- ===== UPI डोनेशन सेक्शन ===== -->
     <div class="upi-donation-card">
         <div class="upi-title">🙏 आपका प्यार ही हमारी ताकत</div>
         <div class="upi-message">
@@ -1198,7 +1504,7 @@ body.site-visible #mainSite { opacity: 1; }
             <div class="upi-app-icon" onclick="openUPIApp('amazonpay')"><i class="fab fa-amazon-pay"></i></div>
         </div>
         
-        <!-- UPI बटन (बड़े और आकर्षक) -->
+        <!-- UPI बटन -->
         <div class="upi-buttons">
             <button class="upi-pay-btn" onclick="payViaUPI('renudevi9984@ybl', '11')">
                 <i class="fas fa-heart"></i> ₹11 सपोर्ट
@@ -1227,14 +1533,14 @@ body.site-visible #mainSite { opacity: 1; }
             <i class="fas fa-qrcode"></i> renudevi9984@ybl
         </div>
         
-        <!-- UPI QR कोड - क्लिक करने पर स्कैन -->
+        <!-- UPI QR कोड -->
         <div class="upi-qr-container" onclick="scanQRCode()">
             <p style="font-size:2.5rem; margin-bottom:1.5rem; color:#9b1f3f;">📱 QR कोड स्कैन करें</p>
             <img src="https://api.qrserver.com/v1/create-qr-code/?size=350x350&data=upi://pay?pa=renudevi9984@ybl&pn=Renuka%20Devi&cu=INR" class="upi-qr-img" alt="UPI QR Code">
         </div>
         
         <div class="upi-note">
-            <i class="fas fa-shield-alt"></i> 100% सुरक्षित भुगतान - आपकी जानकारी पूरी तरह सुरक्षित है
+            <i class="fas fa-shield-alt"></i> 100% सुरक्षित भुगतान
         </div>
     </div>
 
@@ -1263,7 +1569,7 @@ body.site-visible #mainSite { opacity: 1; }
     </div>
 </div>
 
-<!-- सिंगल जावास्क्रिप्ट (दो नहीं) -->
+<!-- सिंगल जावास्क्रिप्ट (फिक्स्ड व्हाट्सएप शेयर) -->
 <script>
 (function() {
     const HOLI_START = new Date('2026-03-04T00:00:00+05:30').getTime();
@@ -1375,27 +1681,56 @@ body.site-visible #mainSite { opacity: 1; }
         document.getElementById('giftModal').style.display = 'none'; 
     };
 
-    // शेयर फंक्शन
+    // शेयर फंक्शन - फिक्स्ड (नाम अब सही से जाएगा)
     window.createShareLink = function() {
         let n = document.getElementById('userNameInput').value.trim();
         if (!n) { 
             alert('नाम लिखें'); 
             return; 
         }
+        // यहाँ senderNameDisplay भी अपडेट करें
+        document.getElementById('senderNameDisplay').innerText = n;
+        
         let link = window.location.origin + window.location.pathname + '?name=' + encodeURIComponent(n);
         document.getElementById('shareLinkDisplay').innerHTML = 
             `<span style="font-size:2rem; word-break:break-all; background:white; padding:1rem 2rem; border-radius:60px; border:2px solid #ec4e7a;">${link}</span>`;
         
+        // व्हाट्सएप बटन अपडेट करें
         document.getElementById('whatsappShareBtn').onclick = function() {
             window.open(`https://wa.me/?text=${encodeURIComponent('🌸 होली की हार्दिक शुभकामनाएं! यह मेरा विशिंग पेज है: ' + link)}`, '_blank');
         };
+        
+        // फ्लोटिंग व्हाट्सएप बटन के लिए भी
+        document.getElementById('floatingShareBtn').onclick = function() {
+            window.open(`https://wa.me/?text=${encodeURIComponent('🌸 होली की हार्दिक शुभकामनाएं! यह मेरा विशिंग पेज है: ' + link)}`, '_blank');
+        };
+        
+        alert('लिंक बन गया है! अब व्हाट्सएप बटन दबाएं');
     };
     
+    // फ्लोटिंग व्हाट्सएप बटन
     document.getElementById('floatingWhatsappBtn').addEventListener('click', function() {
+        let name = document.getElementById('floatingNameInput').value.trim();
         let link = window.location.href;
-        window.open(`https://wa.me/?text=${encodeURIComponent('🌸 होली की हार्दिक शुभकामनाएं! देखिए यह खूबसूरत विशिंग पेज: ' + link)}`, '_blank');
+        if (name) {
+            link = window.location.origin + window.location.pathname + '?name=' + encodeURIComponent(name);
+            // senderNameDisplay भी अपडेट करें
+            document.getElementById('senderNameDisplay').innerText = name;
+        }
+        window.open(`https://wa.me/?text=${encodeURIComponent('🌸 होली की हार्दिक शुभकामनाएं! यह मेरा विशिंग पेज है: ' + link)}`, '_blank');
     });
     
+    document.getElementById('floatingShareBtn').addEventListener('click', function() {
+        let name = document.getElementById('floatingNameInput').value.trim();
+        let link = window.location.href;
+        if (name) {
+            link = window.location.origin + window.location.pathname + '?name=' + encodeURIComponent(name);
+            document.getElementById('senderNameDisplay').innerText = name;
+        }
+        window.open(`https://wa.me/?text=${encodeURIComponent('🌸 होली की हार्दिक शुभकामनाएं! यह मेरा विशिंग पेज है: ' + link)}`, '_blank');
+    });
+    
+    // डिफॉल्ट व्हाट्सएप शेयर
     document.getElementById('whatsappShareBtn').addEventListener('click', function() {
         let link = window.location.href;
         window.open(`https://wa.me/?text=${encodeURIComponent('🌸 होली की हार्दिक शुभकामनाएं! देखिए यह खूबसूरत विशिंग पेज: ' + link)}`, '_blank');
@@ -1526,4 +1861,4 @@ body.site-visible #mainSite { opacity: 1; }
 </script>
 
 </body>
-</html>.
+</html>
