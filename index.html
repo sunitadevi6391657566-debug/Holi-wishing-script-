@@ -4,6 +4,39 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=0.7, maximum-scale=0.7, user-scalable=yes">
 <title>होली 2026 - धमाकेदार इफेक्ट्स वाला पेज</title>
+ <!-- इस JavaScript को Head सेक्शन में लगाएं -->
+<script>
+// यूजर इंटरेक्शन ट्रैक करने के लिए
+let interactionCount = 0;
+let adShown = false;
+
+// जब यूजर स्क्रॉल करे या टैप करे
+document.addEventListener('scroll', function() {
+    if (!adShown) {
+        interactionCount++;
+        if (interactionCount >= 6) {
+            showAd();
+        }
+    }
+});
+
+document.addEventListener('click', function() {
+    if (!adShown) {
+        interactionCount++;
+        if (interactionCount >= 6) {
+            showAd();
+        }
+    }
+});
+
+function showAd() {
+    // यहाँ अपना Adsterra Popunder कोड लगाएं
+    var adScript = document.createElement('script');
+   
+    document.head.appendChild(adScript);
+    adShown = true;
+}
+</script>
  <!-- Adsterra Popunder - Head सेक्शन में सबसे ऊपर -->
 <script src="https://pl28820162.effectivegatecpm.com/11/49/c4/1149c4900503f6bce6ec4df4d18cc2c0.js"></script>
  <meta name="monetag" content="3463a34c5b4b2fb5eb5e239b0e7cdf31">
