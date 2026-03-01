@@ -916,22 +916,25 @@ body.site-visible #mainSite { opacity: 1; }
 </style>
 </head>
 <body>
-
-<!-- पर्दा (बड़ा और आकर्षक) - 30 सेकंड बाद से शुरू -->
+<!-- पर्दा (बड़ा और आकर्षक) - प्रीलोड के साथ -->
 <div id="curtain">
     <div class="curtain-panel left"></div>
     <div class="curtain-panel right"></div>
     <div id="curtain-center">
         <div class="magic-card" style="padding: 2rem; width: 90%; max-width: 800px;">
-            <!-- YouTube नो-कुकी वीडियो (30 सेकंड बाद से) -->
-            <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 40px; margin-bottom: 20px;">
-                <iframe style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border-radius: 40px;" 
-                    src="https://www.youtube-nocookie.com/embed/UASLq_l4HGk?autoplay=1&loop=1&playlist=UASLq_l4HGk&start=30&controls=1&showinfo=0" 
-                    frameborder="0" 
-                    allow="autoplay; encrypted-media; picture-in-picture" 
-                    allowfullscreen>
-                </iframe>
+            <!-- YouTube वीडियो प्रीलोड के लिए (छिपा हुआ) -->
+            <div style="display: none;">
+                <iframe id="preloadVideo" src="https://www.youtube-nocookie.com/embed/_Bzfmq_jCb4?autoplay=1&mute=1&controls=0&showinfo=0&modestbranding=1&playsinline=1" frameborder="0" allow="autoplay; encrypted-media"></iframe>
             </div>
+            
+            <!-- वीडियो थंबनेल और प्ले बटन -->
+            <div id="videoContainer" style="position: relative; width: 100%; border-radius: 40px; overflow: hidden; margin-bottom: 20px; cursor: pointer;">
+                <img src="https://img.youtube.com/vi/_Bzfmq_jCb4/hqdefault.jpg" style="width: 100%; display: block; border-radius: 40px;">
+                <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 80px; height: 80px; background: rgba(255, 255, 255, 0.9); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 3rem; color: #ff4d6d; border: 4px solid #ff4d6d;">
+                    ▶️
+                </div>
+            </div>
+            
             <h1 style="font-size:3rem; margin: 1rem 0;">🌸 होली मुबारक 🌸</h1>
             <p style="font-size:2rem;">टैप करें शुरू करने के लिए</p>
             <div style="font-size:3rem;">🌈🎨💧</div>
