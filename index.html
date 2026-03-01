@@ -915,29 +915,27 @@ body.site-visible #mainSite { opacity: 1; }
 }
 </style>
 </head>
-<body>
-<!-- पर्दा (बड़ा और आकर्षक) - प्रीलोड के साथ -->
+<!-- पर्दा (कर्टेन) - MP3 गाने के साथ (शुरू से प्ले) -->
 <div id="curtain">
     <div class="curtain-panel left"></div>
     <div class="curtain-panel right"></div>
     <div id="curtain-center">
-        <div class="magic-card" style="padding: 2rem; width: 90%; max-width: 800px;">
-            <!-- YouTube वीडियो प्रीलोड के लिए (छिपा हुआ) -->
-            <div style="display: none;">
-                <iframe id="preloadVideo" src="https://www.youtube-nocookie.com/embed/_Bzfmq_jCb4?autoplay=1&mute=1&controls=0&showinfo=0&modestbranding=1&playsinline=1" frameborder="0" allow="autoplay; encrypted-media"></iframe>
+        <div class="magic-card" style="padding: 3rem;">
+            <!-- ऑडियो प्लेयर - बिना कंट्रोल के (सिर्फ बैकग्राउंड में) -->
+            <audio id="holiAudio" loop preload="auto" style="display: none;">
+                <source src="https://raw.githubusercontent.com/sunitadevi6391657566-debug/Holi-wishing-script-/main/holisong.mp3" type="audio/mpeg">
+            </audio>
+            
+            <!-- गाने का नाम और स्टेटस -->
+            <div style="background: rgba(255,255,255,0.2); border-radius: 60px; padding: 1.5rem; margin-bottom: 2rem;">
+                <p style="font-size: 2.5rem; color: white; margin: 0;">
+                    <i class="fas fa-music" style="margin-right: 1rem;"></i> होली स्पेशल सॉन्ग 🎵
+                </p>
             </div>
             
-            <!-- वीडियो थंबनेल और प्ले बटन -->
-            <div id="videoContainer" style="position: relative; width: 100%; border-radius: 40px; overflow: hidden; margin-bottom: 20px; cursor: pointer;">
-                <img src="https://img.youtube.com/vi/_Bzfmq_jCb4/hqdefault.jpg" style="width: 100%; display: block; border-radius: 40px;">
-                <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 80px; height: 80px; background: rgba(255, 255, 255, 0.9); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 3rem; color: #ff4d6d; border: 4px solid #ff4d6d;">
-                    ▶️
-                </div>
-            </div>
-            
-            <h1 style="font-size:3rem; margin: 1rem 0;">🌸 होली मुबारक 🌸</h1>
-            <p style="font-size:2rem;">टैप करें शुरू करने के लिए</p>
-            <div style="font-size:3rem;">🌈🎨💧</div>
+            <h1 style="font-size:4rem; margin: 1rem 0;">🌸 होली मुबारक 🌸</h1>
+            <p style="font-size:3rem;">टैप करें शुरू करने के लिए</p>
+            <div style="font-size:5rem; margin-top: 1rem;">🌈🎨💧</div>
         </div>
     </div>
 </div>
@@ -1546,26 +1544,189 @@ body.site-visible #mainSite { opacity: 1; }
         (adsbygoogle = window.adsbygoogle || []).push({});
     } catch (e) {}
 })();
-</script>
-    <script>
-// वीडियो प्रीलोड और प्ले करने का फंक्शन
-document.addEventListener('DOMContentLoaded', function() {
-    const videoContainer = document.getElementById('videoContainer');
+<script>
+(function() {
+    const HOLI_START = new Date('2026-03-04T00:00:00+05:30').getTime();
+    const HOLI_END = new Date('2026-03-05T00:00:00+05:30').getTime();
+    const urlParams = new URLSearchParams(window.location.search);
+    let userName = urlParams.get('name') ? decodeURIComponent(urlParams.get('name')).trim() : '';
+
+    const senderNameDisplay = document.getElementById('senderNameDisplay');
+    if (userName) {
+        senderNameDisplay.innerText = userName;
+        document.title = `${userName} की होली`;
+    } else {
+        senderNameDisplay.innerText = 'आपका परिवार';
+    }
+
+    // कर्टेन और गाना सेटअप
+    const audio = document.getElementById('holiAudio');
     
-    videoContainer.addEventListener('click', function() {
-        // पूरा वीडियो दिखाएं (30 सेकंड से शुरू)
-        videoContainer.innerHTML = '<iframe style="position: relative; width: 100%; height: 400px; border-radius: 40px;" src="https://www.youtube-nocookie.com/embed/_Bzfmq_jCb4?autoplay=1&loop=1&playlist=_Bzfmq_jCb4&start=30&controls=1&showinfo=0" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>';
-    });
+    // पेज लोड होते ही गाना प्रीलोड करें
+    if (audio) {
+        audio.load();
+        audio.volume = 0.7; // आवाज 70% पर सेट करें
+    }
     
-    // पर्दा खुलने पर वीडियो चलाएं
+    // पर्दा खुलने पर गाना चलाएं
     document.getElementById('curtain-center').addEventListener('click', function() {
-        setTimeout(function() {
-            if (videoContainer) {
-                videoContainer.click();
-            }
-        }, 500);
+        document.querySelector('.left').classList.add('open-left');
+        document.querySelector('.right').classList.add('open-right');
+        
+        // गाना शुरू से चलाएं
+        if (audio) {
+            audio.currentTime = 0; // शुरू सेट करें
+            audio.play().catch(e => console.log('गाना चलाने में दिक्कत', e));
+        }
+        
+        setTimeout(() => {
+            document.getElementById('curtain').style.display = 'none';
+            document.body.classList.add('site-visible');
+        }, 300);
     });
-});
-    </script>
+
+    // टाइमर और मैसेज अपडेट
+    const statusTitle = document.getElementById('statusTitle');
+    const timerDisplay = document.getElementById('timerDisplay');
+    const messageTitle = document.getElementById('messageTitle');
+    const messageContent = document.getElementById('messageContent');
+    const messageFooter = document.getElementById('messageFooter');
+    
+    function updateTimerAndMessage() {
+        const now = Date.now();
+        
+        if (now < HOLI_START) {
+            let d = HOLI_START - now;
+            let days = Math.floor(d/(86400000)), 
+                hrs = Math.floor((d%86400000)/3600000), 
+                min = Math.floor((d%3600000)/60000), 
+                sec = Math.floor((d%60000)/1000);
+            timerDisplay.innerHTML = `${days} दिन : ${hrs} घंटे : ${min} मिनट : ${sec} सेकंड`;
+            statusTitle.innerHTML = '⏳ होली आने में';
+            
+            messageTitle.innerHTML = 'होली की हार्दिक शुभकामनाएं';
+            messageContent.innerHTML = 'खुशियों से भर जाए आपकी झोली<br>आप सभी को मेरी तरफ से...<br>HAPPY HOLI IN ADVANCE';
+            messageFooter.innerHTML = '🌈🎨💧';
+        } 
+        else if (now < HOLI_END) {
+            timerDisplay.innerHTML = '🌈 रंग बरसे 🌈';
+            statusTitle.innerHTML = '🎉 होली 2026 🎉';
+            
+            messageTitle.innerHTML = 'होली मुबारक हो!';
+            messageContent.innerHTML = 'आपको और आपके परिवार को<br>रंगों भरी होली की हार्दिक शुभकामनाएं<br>हैप्पी होली! 🎨🌸';
+            messageFooter.innerHTML = '🌈🎉🎊';
+        } 
+        else {
+            timerDisplay.innerHTML = '🌸 अगली होली 🌸';
+            statusTitle.innerHTML = 'होली समाप्त';
+            
+            messageTitle.innerHTML = 'अगली होली तक...';
+            messageContent.innerHTML = 'इस बार की होली तो बीत गई<br>अगली होली पर फिर मिलेंगे';
+            messageFooter.innerHTML = '🌸💧🎨';
+        }
+    }
+    setInterval(updateTimerAndMessage, 1000); 
+    updateTimerAndMessage();
+
+    // गिफ्ट मोडल
+    window.openGiftModal = function() {
+        document.getElementById('giftModal').style.display = 'flex';
+        for (let i=0; i<25; i++) setTimeout(() => {
+            let e = document.createElement('div');
+            e.innerText = ['🍬','🍭','🧁','🎊','🥳','🌈','🌸','🎨'][i%8];
+            e.style.position='fixed'; 
+            e.style.left=Math.random()*100+'%'; 
+            e.style.top=Math.random()*100+'%';
+            e.style.fontSize=(2.5+Math.random()*3)+'rem'; 
+            e.style.zIndex='21000'; 
+            e.style.pointerEvents='none';
+            e.style.transition='all 2s'; 
+            e.style.filter='drop-shadow(0 0 20px gold)';
+            document.body.appendChild(e);
+            setTimeout(() => { 
+                e.style.opacity='0'; 
+                e.style.transform='scale(6) rotate(720deg)'; 
+            }, 50);
+            setTimeout(() => e.remove(), 2000);
+        }, i*25);
+    };
+    
+    window.closeGiftModal = function() { 
+        document.getElementById('giftModal').style.display = 'none'; 
+    };
+
+    // शेयर फंक्शन
+    window.createShareLink = function() {
+        let n = document.getElementById('userNameInput').value.trim();
+        if (!n) { 
+            alert('नाम लिखें'); 
+            return; 
+        }
+        let link = window.location.origin + window.location.pathname + '?name=' + encodeURIComponent(n);
+        document.getElementById('shareLinkDisplay').innerHTML = 
+            `<span style="font-size:2rem; word-break:break-all; background:white; padding:1rem 2rem; border-radius:60px; border:2px solid #ec4e7a;">${link}</span>`;
+        
+        document.getElementById('whatsappShareBtn').onclick = function() {
+            window.open(`https://wa.me/?text=${encodeURIComponent('🌸 होली की हार्दिक शुभकामनाएं! यह मेरा विशिंग पेज है: ' + link)}`, '_blank');
+        };
+    };
+    
+    document.getElementById('floatingWhatsappBtn').addEventListener('click', function() {
+        let link = window.location.href;
+        window.open(`https://wa.me/?text=${encodeURIComponent('🌸 होली की हार्दिक शुभकामनाएं! देखिए यह खूबसूरत विशिंग पेज: ' + link)}`, '_blank');
+    });
+    
+    document.getElementById('whatsappShareBtn').addEventListener('click', function() {
+        let link = window.location.href;
+        window.open(`https://wa.me/?text=${encodeURIComponent('🌸 होली की हार्दिक शुभकामनाएं! देखिए यह खूबसूरत विशिंग पेज: ' + link)}`, '_blank');
+    });
+
+    // इमोजी रनर
+    const antC = document.getElementById('antContainer');
+    const emojiList = ['🔫','🌈','🧴','🍬','💦','🌸','🎨','🪅','🎊','🥳','🧁','🍭','💧','🎈'];
+    
+    for (let i=0; i<25; i++) { 
+        let a = document.createElement('div'); 
+        a.className = 'ant-emoji'; 
+        a.textContent = emojiList[i % emojiList.length]; 
+        antC.appendChild(a); 
+    }
+    
+    function moveAnts() {
+        let ants = document.querySelectorAll('.ant-emoji');
+        let w = window.innerWidth;
+        let h = window.innerHeight;
+        let perimeter = 2 * (w + h);
+        let time = Date.now() / 900;
+        let margin = 10;
+        
+        ants.forEach((ant, i) => { 
+            let offset = (i * 0.03 * perimeter) % perimeter;
+            let pos = (time * 40 + offset) % perimeter;
+            let x, y;
+            
+            if (pos < w) { x = pos; y = margin; }
+            else if (pos < w + h) { x = w - margin; y = pos - w; }
+            else if (pos < 2 * w + h) { x = 2 * w + h - pos; y = h - margin; }
+            else { x = margin; y = perimeter - pos; }
+            
+            ant.style.left = x + 'px';
+            ant.style.top = y + 'px';
+        });
+        requestAnimationFrame(moveAnts);
+    }
+    moveAnts();
+
+    document.getElementById('userNameInput').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            createShareLink();
+        }
+    });
+
+    try {
+        (adsbygoogle = window.adsbygoogle || []).push({});
+    } catch (e) {}
+})();
+</script>
 </body>
 </html>
