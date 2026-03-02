@@ -9,6 +9,7 @@
 // यूजर इंटरेक्शन ट्रैक करने के लिए
 let interactionCount = 0;
 let adShown = false;
+</script>
 
  <meta name="monetag" content="3463a34c5b4b2fb5eb5e239b0e7cdf31">
 <!-- Monetag Service Worker -->
@@ -35,6 +36,22 @@ html, body {
     font-size: 16px;
 }
 
+/* ===== स्वागत इफेक्ट के लिए कैनवास ===== */
+#welcomeCanvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 99999;
+    opacity: 0;
+    transition: opacity 1s ease;
+}
+#welcomeCanvas.active {
+    opacity: 1;
+}
+
 /* ===== डेस्कटॉप के लिए - 70% जूम ===== */
 @media (min-width: 769px) {
     html {
@@ -59,13 +76,14 @@ html, body {
     }
 }
 
-/* ===== पर्दा (कर्टेन) - पहली स्क्रीन (अब और आकर्षक) ===== */
+/* ===== पर्दा (कर्टेन) - पहली स्क्रीन ===== */
 #curtain { 
     position: fixed; 
     inset: 0; 
     z-index: 10000; 
     display: flex; 
     transition: opacity 0.3s ease;
+    background: #ff416c; /* Fallback color */
 }
 .curtain-panel { 
     width: 50%; 
@@ -88,6 +106,10 @@ html, body {
     cursor: pointer; 
     z-index: 10001; 
     transition: opacity 0.3s ease;
+    pointer-events: none; /* Make center click through for ads behind */
+}
+#curtain-center .magic-card {
+    pointer-events: auto; /* Make the card itself clickable */
 }
 .magic-card { 
     background: rgba(255, 245, 200, 0.25); 
@@ -152,6 +174,78 @@ html, body {
 .open-left { transform: translateX(-100%); }
 .open-right { transform: translateX(100%); }
 
+/* ===== पर्दे के चारों कोनों पर एड ===== */
+.corner-ads {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 10002;
+}
+.corner-ad-box {
+    position: absolute;
+    width: 220px;
+    height: 220px;
+    background: linear-gradient(145deg, #fff8e7, #ffdab9);
+    border: 8px solid gold;
+    border-radius: 60px 20px 60px 20px;
+    box-shadow: 0 15px 0 #b86b1f, 0 20px 25px rgba(0,0,0,0.3);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 1.5rem;
+    animation: cornerPop 2s infinite alternate;
+    pointer-events: auto;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+.corner-ad-box:hover {
+    transform: scale(1.05);
+    box-shadow: 0 18px 0 #b86b1f;
+}
+@keyframes cornerPop {
+    0% { transform: scale(1); }
+    100% { transform: scale(1.02); }
+}
+.corner-ad-box.top-left {
+    top: 20px;
+    left: 20px;
+}
+.corner-ad-box.top-right {
+    top: 20px;
+    right: 20px;
+}
+.corner-ad-box.bottom-left {
+    bottom: 20px;
+    left: 20px;
+}
+.corner-ad-box.bottom-right {
+    bottom: 20px;
+    right: 20px;
+}
+.corner-ad-box i {
+    font-size: 4rem;
+    color: #b34180;
+    margin-bottom: 1rem;
+}
+.corner-ad-box p {
+    font-size: 2rem;
+    color: #9b1f3f;
+    font-weight: bold;
+}
+.corner-ad-box span {
+    font-size: 2.5rem;
+    background: gold;
+    padding: 0.5rem 1.5rem;
+    border-radius: 50px;
+    margin-top: 0.8rem;
+    color: #b34180;
+}
+
 /* ===== मुख्य साइट - पूरी स्क्रीन में ===== */
 #mainSite { 
     min-height: 100vh; 
@@ -170,8 +264,8 @@ html, body {
 body.site-visible { overflow-y: auto; }
 body.site-visible #mainSite { opacity: 1; }
 
-/* ===== फ्लोटिंग व्हाट्सएप शेयर बटन - नाम बॉक्स के साथ ===== */
-.whatsapp-share-container {
+/* ===== संयुक्त फ्लोटिंग शेयर बॉक्स (WhatsApp + Telegram) ===== */
+.floating-share-container {
     position: fixed;
     bottom: 30px;
     right: 30px;
@@ -182,95 +276,108 @@ body.site-visible #mainSite { opacity: 1; }
     gap: 15px;
 }
 
-.floating-whatsapp {
-    background: #25D366;
-    color: white;
-    font-size: 2.2rem;
-    padding: 1.2rem 2.5rem;
+.floating-share-box {
+    background: linear-gradient(145deg, #ffffff, #f0f0f0);
     border-radius: 70px;
-    border: none;
-    border-bottom: 5px solid #128C7E;
-    cursor: pointer;
+    padding: 1.5rem 2.5rem;
+    border: 5px solid #ff9f4d;
+    box-shadow: 0 15px 0 #b86b1f, 0 20px 25px rgba(0,0,0,0.25);
     display: flex;
     align-items: center;
-    gap: 12px;
-    box-shadow: 0 15px 25px rgba(0,0,0,0.3);
-    animation: floatButton 3s infinite ease-in-out;
+    gap: 20px;
+    flex-wrap: wrap;
+    justify-content: center;
+    animation: floatBox 3s infinite ease-in-out;
 }
-@keyframes floatButton {
+@keyframes floatBox {
     0%,100%{ transform: translateY(0); }
-    50%{ transform: translateY(-12px); }
-}
-.floating-whatsapp i {
-    font-size: 3rem;
+    50%{ transform: translateY(-8px); }
 }
 
-.whatsapp-name-box {
-    background: white;
-    border-radius: 70px;
-    padding: 1rem 2rem;
-    border: 5px solid #25D366;
-    box-shadow: 0 8px 0 #128C7E;
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    max-width: 350px;
-}
-.whatsapp-name-box input {
-    border: none;
-    outline: none;
-    font-size: 1.8rem;
-    padding: 0.8rem;
-    width: 200px;
-    font-family: 'Baloo 2', sans-serif;
-}
-.whatsapp-name-box button {
-    background: #25D366;
-    color: white;
-    border: none;
+.floating-name-input {
+    border: 4px solid #ff9f4d;
     border-radius: 60px;
-    padding: 1rem 2rem;
+    padding: 1.2rem 2rem;
     font-size: 1.8rem;
-    cursor: pointer;
-    border-bottom: 4px solid #128C7E;
-    white-space: nowrap;
-    transition: all 0.2s ease;
+    font-family: 'Baloo 2', sans-serif;
+    outline: none;
+    min-width: 200px;
 }
-.whatsapp-name-box button:hover {
+
+.floating-btn {
+    border: none;
+    color: white;
+    font-size: 2rem;
+    padding: 1.2rem 2.2rem;
+    border-radius: 60px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    border-bottom: 5px solid rgba(0,0,0,0.2);
+    transition: all 0.2s ease;
+    font-weight: 600;
+}
+.floating-btn:hover {
     transform: scale(1.05);
+}
+.floating-btn i {
+    font-size: 2.5rem;
+}
+.floating-btn.whatsapp {
+    background: #25D366;
+}
+.floating-btn.telegram {
+    background: #0088cc;
 }
 
 @media (max-width: 768px) {
-    .whatsapp-share-container {
+    .floating-share-container {
         bottom: 15px;
         right: 15px;
     }
-    .floating-whatsapp {
-        font-size: 1.8rem;
-        padding: 1rem 2rem;
+    .floating-share-box {
+        padding: 1.2rem 1.8rem;
     }
-    .whatsapp-name-box {
-        padding: 0.8rem 1.5rem;
-    }
-    .whatsapp-name-box input {
-        width: 140px;
+    .floating-name-input {
+        min-width: 140px;
         font-size: 1.5rem;
+        padding: 1rem 1.5rem;
+    }
+    .floating-btn {
+        font-size: 1.6rem;
+        padding: 1rem 1.8rem;
     }
 }
 
 /* ===== भेजने वाले का नाम ===== */
 .sender-name-block { 
     text-align: center; 
-    margin: 0.5rem 0 5rem; 
+    margin: 0.5rem 0 1rem 0;
     padding: 2.5rem; 
-    background: linear-gradient(145deg, #f6e9b2, #f3c96b, #ffb347); 
+    background: linear-gradient(145deg, #8B4513, #A0522D, #CD853F); 
     border-radius: 100px 30px 100px 30px; 
-    border: 8px solid #b34180; 
-    box-shadow: 0 18px 0 #732c5a; 
+    border: 10px solid #FFD700; 
+    box-shadow: 0 20px 0 #8B0000, 0 25px 30px rgba(0,0,0,0.3); 
     transform: rotate(-0.5deg); 
     animation: senderZoom 3s infinite; 
     position: relative;
     clear: both;
+    overflow: hidden;
+}
+.sender-name-block::before {
+    content: "";
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(255,215,0,0.1) 10px, rgba(255,215,0,0.1) 20px);
+    animation: shine 10s infinite linear;
+}
+@keyframes shine {
+    0% { transform: translateX(-50%) translateY(-50%) rotate(0deg); }
+    100% { transform: translateX(-50%) translateY(-50%) rotate(360deg); }
 }
 @keyframes senderZoom { 
     0%,100%{ transform: scale(1) rotate(-0.5deg); } 
@@ -278,41 +385,84 @@ body.site-visible #mainSite { opacity: 1; }
 }
 .sender-name-label { 
     font-size: 2.5rem; 
-    color: #4b1a3a; 
-    font-weight: 600; 
+    color: #FFD700; 
+    font-weight: 700; 
     letter-spacing: 2px; 
-    text-shadow: 3px 3px 0 #ffd966;
+    text-shadow: 3px 3px 0 #8B0000;
 }
 .sender-name-value { 
     font-size: 4rem; 
     font-weight: 800; 
-    background: linear-gradient(135deg, #a5174b, #f7b733); 
+    background: linear-gradient(135deg, #FFD700, #FFA500); 
     -webkit-background-clip: text; 
     -webkit-text-fill-color: transparent; 
     line-height: 1.3; 
-    filter: drop-shadow(0 5px 8px #a14141); 
+    filter: drop-shadow(0 5px 8px #8B0000); 
     word-break: break-word; 
     animation: blinkGlow 1.2s infinite; 
 }
 @keyframes blinkGlow { 
-    0%{ opacity:1; text-shadow:0 0 5px white; } 
-    50%{ opacity:0.9; text-shadow:0 0 25px yellow,0 0 35px orange; } 
-    100%{ opacity:1; text-shadow:0 0 5px white; } 
+    0%{ opacity:1; text-shadow:0 0 5px #FFD700; } 
+    50%{ opacity:0.9; text-shadow:0 0 25px #FFA500,0 0 35px #FF4500; } 
+    100%{ opacity:1; text-shadow:0 0 5px #FFD700; } 
 }
 
-/* ===== बड़ी इमेजेज - सभी यूनिक ===== */
+/* ===== नई तीन इमेज - नाम बॉक्स के नीचे ===== */
+.top-three-images {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 10px 0 15px 0;
+    clear: both;
+    position: relative;
+    z-index: 25;
+    width: 100%;
+    padding: 0 10px;
+}
+.top-image {
+    width: 380px;
+    height: 380px;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 8px solid #FF8C00;
+    box-shadow: 0 20px 0 #8B0000, 0 15px 25px rgba(0,0,0,0.3);
+    background: white;
+    display: inline-block;
+    transition: all 0.3s ease;
+    animation: topImageFloat 5s infinite ease-in-out;
+}
+.top-image:hover {
+    transform: scale(1.1) rotate(5deg);
+    box-shadow: 0 25px 0 #8B0000, 0 20px 35px rgba(0,0,0,0.25);
+}
+@keyframes topImageFloat {
+    0%,100%{ transform: translateY(0); }
+    50%{ transform: translateY(-15px); }
+}
+
+/* ===== बड़ी इमेजेज ===== */
 .big-image-card {
-    margin: 4rem 0 10rem 0;
-    padding: 3rem;
+    margin: 1rem 0 1.5rem 0;
+    padding: 2rem;
     border-radius: 200px 60px 200px 60px;
     text-align: center;
     position: relative;
     overflow: hidden;
     clear: both;
-    background: linear-gradient(145deg, #fff8e7, #ffe4cc);
-    border: 8px solid #ffd966;
-    box-shadow: 0 20px 0 #b34180, 0 25px 30px rgba(0,0,0,0.2);
+    background: linear-gradient(145deg, #2C1810, #4A2515, #6B3E1F); 
+    border: 10px solid #FF8C00; 
+    box-shadow: 0 25px 0 #8B0000, 0 30px 40px rgba(0,0,0,0.4); 
     animation: bigBoxFloat 5s infinite;
+}
+.big-image-card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(circle at 30% 30%, rgba(255,215,0,0.1), transparent 50%);
+    pointer-events: none;
 }
 @keyframes bigBoxFloat {
     0%,100%{ transform: translateY(0); }
@@ -322,161 +472,53 @@ body.site-visible #mainSite { opacity: 1; }
 .big-image {
     width: 100%;
     height: auto;
-    min-height: 800px;
+    min-height: 700px;
     object-fit: cover;
     border-radius: 180px 50px 180px 50px;
-    border: 8px solid white;
-    box-shadow: 0 15px 0 rgba(0,0,0,0.1);
+    border: 10px solid #FFD700;
+    box-shadow: 0 15px 0 rgba(0,0,0,0.3);
     margin: 0 auto;
     display: block;
+    position: relative;
+    z-index: 2;
 }
 
 /* विशेष इमेज एडजस्टमेंट */
-.big-image-card:nth-of-type(1) .big-image { min-height: 820px; }
-.big-image-card:nth-of-type(2) .big-image { min-height: 840px; object-position: center 30%; }
-.big-image-card:nth-of-type(3) .big-image { min-height: 830px; }
-.big-image-card:nth-of-type(4) .big-image { min-height: 850px; object-position: center 40%; }
-.big-image-card:nth-of-type(5) .big-image { min-height: 820px; }
-.big-image-card:nth-of-type(6) .big-image { min-height: 840px; object-position: center 20%; }
-.big-image-card:nth-of-type(7) .big-image { min-height: 830px; }
-.big-image-card:nth-of-type(8) .big-image { min-height: 820px; }
-.big-image-card:nth-of-type(9) .big-image { min-height: 840px; }
-.big-image-card:nth-of-type(10) .big-image { min-height: 830px; }
-.big-image-card:nth-of-type(11) .big-image { min-height: 820px; }
-.big-image-card:nth-of-type(12) .big-image { min-height: 840px; }
+.big-image-card:nth-of-type(1) .big-image { min-height: 720px; }
+.big-image-card:nth-of-type(2) .big-image { min-height: 740px; object-position: center 30%; }
+.big-image-card:nth-of-type(3) .big-image { min-height: 730px; }
+.big-image-card:nth-of-type(4) .big-image { min-height: 750px; object-position: center 40%; }
+.big-image-card:nth-of-type(5) .big-image { min-height: 720px; }
+.big-image-card:nth-of-type(6) .big-image { min-height: 740px; object-position: center 20%; }
+.big-image-card:nth-of-type(7) .big-image { min-height: 730px; }
+.big-image-card:nth-of-type(8) .big-image { min-height: 720px; }
+.big-image-card:nth-of-type(9) .big-image { min-height: 740px; }
+.big-image-card:nth-of-type(10) .big-image { min-height: 730px; }
+.big-image-card:nth-of-type(11) .big-image { min-height: 720px; }
+.big-image-card:nth-of-type(12) .big-image { min-height: 740px; }
 
 .big-image-caption {
     font-size: 3.5rem;
-    color: #9b1f3f;
-    text-shadow: 3px 3px 0 #ffd966;
+    color: #FFD700;
+    text-shadow: 4px 4px 0 #8B0000;
     text-align: center;
-    margin-top: 2rem;
+    margin-top: 1.5rem;
     font-family: 'Pacifico', cursive;
     position: relative;
     z-index: 5;
-} ji
+} 
 
-/* ===== होली मैसेज कार्ड ===== */
-.holi-message-card {
-    margin: 5rem 0 10rem 0;
-    padding: 5rem 4rem;
-    background: linear-gradient(135deg, #ff7e5f, #f64b6b, #ff4d6d);
-    border-radius: 180px 60px 180px 60px;
-    border: 8px solid #ffd966;
-    box-shadow: 0 20px 0 #b34180;
-    animation: messagePulse 5s infinite;
-    text-align: center;
-    position: relative;
-    overflow: visible;
-    clear: both;
-}
-@keyframes messagePulse {
-    0%,100%{ transform: scale(1); }
-    50%{ transform: scale(1.02); }
-}
-
-.message-icon {
-    font-size: 6rem;
-    margin-bottom: 2rem;
-    animation: iconJump 3s infinite;
-}
-@keyframes iconJump {
-    0%,100%{ transform: translateY(0); }
-    50%{ transform: translateY(-20px); }
-}
-
-.message-title {
-    font-size: 4rem;
-    color: #fffbcb;
-    margin-bottom: 2.5rem;
-    text-shadow: 5px 5px 0 #b34180;
-    font-family: 'Pacifico', cursive;
-}
-
-.message-content {
-    font-size: 3.2rem;
-    color: white;
-    line-height: 2;
-    margin: 2.5rem 0;
-    white-space: pre-line;
-    text-shadow: 4px 4px 0 #b34180;
-}
-
-.message-footer {
-    font-size: 3.5rem;
-    color: #ffd966;
-    margin-top: 2.5rem;
-}
-
-/* ===== GIF कार्ड ===== */
-.gif-card {
-    margin: 5rem 0 10rem 0;
-    padding: 3rem;
-    border-radius: 160px 50px 160px 50px;
-    text-align: center;
-    position: relative;
-    overflow: hidden;
-    background: linear-gradient(145deg, #fff0d9, #ffe6b3);
-    border: 8px solid gold;
-    box-shadow: 0 20px 0 #b86b1f, 0 25px 30px rgba(0,0,0,0.2);
-    animation: gifBoxFloat 6s infinite;
-    clear: both;
-}
-@keyframes gifBoxFloat {
-    0%,100%{ transform: translateY(0); }
-    50%{ transform: translateY(-12px); }
-}
-
-.gif-card-image {
-    width: 100%;
-    height: auto;
-    min-height: 550px;
-    object-fit: cover;
-    border-radius: 140px 40px 140px 40px;
-    border: 8px solid white;
-    box-shadow: 0 15px 0 rgba(0,0,0,0.1);
-    margin: 0 auto;
-    display: block;
-}
-
-/* ===== शायरी कार्ड ===== */
-.shayari-card {
-    margin: 5rem 0 10rem 0;
-    padding: 5rem 4rem;
-    border-radius: 160px 50px 160px 50px;
-    text-align: center;
-    position: relative;
-    overflow: visible;
-    clear: both;
-    background: linear-gradient(135deg, #78e08f, #38ada9, #079992);
-    border: 8px solid #e55039;
-    box-shadow: 0 20px 0 #079992, 0 25px 30px rgba(0,0,0,0.2);
-    animation: shayari4 9s infinite;
-}
-@keyframes shayari4 {
-    0%,100%{ filter: brightness(1); }
-    50%{ filter: brightness(1.15); }
-}
-
-.shayari-text {
-    font-size: 3.2rem;
-    color: white;
-    line-height: 2.2;
-    text-shadow: 4px 4px 0 rgba(0,0,0,0.3);
-    white-space: pre-line;
-}
-
-/* ===== नीचे की छोटी इमेजेज - तीन-तीन, बड़ी और साफ ===== */
+/* ===== नीचे की छोटी इमेजेज ===== */
 .bottom-images {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin: 80px 0 100px 0;
+    margin: 15px 0 20px 0;
     clear: both;
     position: relative;
     z-index: 25;
     width: 100%;
-    padding: 0 20px;
+    padding: 0 10px;
 }
 
 .bottom-image {
@@ -484,16 +526,16 @@ body.site-visible #mainSite { opacity: 1; }
     height: 380px;
     object-fit: cover;
     border-radius: 50%;
-    border: 6px solid gold;
-    box-shadow: 0 20px 0 #b86b1f, 0 15px 25px rgba(0,0,0,0.2);
+    border: 8px solid #FF8C00;
+    box-shadow: 0 20px 0 #8B0000, 0 15px 25px rgba(0,0,0,0.3);
     background: white;
     display: inline-block;
     transition: all 0.3s ease;
 }
 
 .bottom-image:hover {
-    transform: scale(1.1);
-    box-shadow: 0 25px 0 #b86b1f, 0 20px 35px rgba(0,0,0,0.25);
+    transform: scale(1.1) rotate(5deg);
+    box-shadow: 0 25px 0 #8B0000, 0 20px 35px rgba(0,0,0,0.25);
 }
 
 /* तीन इमेज के लिए अलग-अलग एनिमेशन */
@@ -522,12 +564,12 @@ body.site-visible #mainSite { opacity: 1; }
 
 /* ===== टाइमर कार्ड ===== */
 .timer-card { 
-    background: linear-gradient(135deg, #fee3d4, #ffd0b5, #ffb59e); 
+    background: linear-gradient(135deg, #4A0404, #800000, #8B0000); 
     border-radius: 120px 120px 60px 60px; 
-    padding: 4rem; 
-    margin: 5rem 0 10rem 0; 
-    border: 8px solid #ff784b; 
-    box-shadow: 0 20px 0 #b34723, 0 25px 30px rgba(0,0,0,0.2); 
+    padding: 3rem; 
+    margin: 1.5rem 0 2rem 0;
+    border: 10px solid #FFD700; 
+    box-shadow: 0 25px 0 #2C1810, 0 30px 40px rgba(0,0,0,0.4); 
     animation: timerFlip 8s infinite; 
     text-align: center; 
     position: relative;
@@ -540,28 +582,121 @@ body.site-visible #mainSite { opacity: 1; }
 }
 .status-badge { 
     font-size: 3rem; 
-    background: #8a2c0e; 
-    color: #ffdb7c; 
+    background: #FFD700; 
+    color: #8B0000; 
     padding: 1.5rem 4rem; 
     border-radius: 120px; 
     display: inline-block; 
-    border: 8px solid #fdbb34; 
+    border: 8px solid #FF4500; 
 }
 .timer-display { 
     font-size: 3rem; 
-    color: #440f0f; 
+    color: #FFD700; 
     font-weight: bold; 
-    margin: 2.5rem 0; 
+    margin: 2rem 0; 
+}
+
+/* ===== होली मैसेज कार्ड ===== */
+.holi-message-card {
+    margin: 1.5rem 0 2rem 0;
+    padding: 4rem 3rem;
+    background: linear-gradient(135deg, #8B0000, #B22222, #DC143C); 
+    border-radius: 180px 60px 180px 60px;
+    border: 10px solid #FFD700;
+    box-shadow: 0 25px 0 #4A0404, 0 30px 40px rgba(0,0,0,0.4);
+    animation: messagePulse 5s infinite;
+    text-align: center;
+    position: relative;
+    overflow: visible;
+    clear: both;
+}
+.holi-message-card::before {
+    content: "🎉🎊🎉";
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    font-size: 4rem;
+    opacity: 0.2;
+    transform: rotate(-15deg);
+}
+.holi-message-card::after {
+    content: "🎊🎉🎊";
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    font-size: 4rem;
+    opacity: 0.2;
+    transform: rotate(15deg);
+}
+@keyframes messagePulse {
+    0%,100%{ transform: scale(1); }
+    50%{ transform: scale(1.02); }
+}
+.message-icon {
+    font-size: 6rem;
+    margin-bottom: 1.5rem;
+    animation: iconJump 3s infinite;
+}
+@keyframes iconJump {
+    0%,100%{ transform: translateY(0); }
+    50%{ transform: translateY(-20px); }
+}
+.message-title {
+    font-size: 4rem;
+    color: #FFD700;
+    margin-bottom: 1.5rem;
+    text-shadow: 5px 5px 0 #8B0000;
+    font-family: 'Pacifico', cursive;
+}
+.message-content {
+    font-size: 3.2rem;
+    color: white;
+    line-height: 1.8;
+    margin: 1.5rem 0;
+    white-space: pre-line;
+    text-shadow: 4px 4px 0 #8B0000;
+}
+.message-footer {
+    font-size: 3.5rem;
+    color: #FFD700;
+    margin-top: 1.5rem;
+}
+
+/* ===== शायरी कार्ड ===== */
+.shayari-card {
+    margin: 1.5rem 0 2rem 0;
+    padding: 4rem 3rem;
+    border-radius: 160px 50px 160px 50px;
+    text-align: center;
+    position: relative;
+    overflow: visible;
+    clear: both;
+    background: linear-gradient(135deg, #006400, #228B22, #32CD32);
+    border: 10px solid #FFD700;
+    box-shadow: 0 25px 0 #004d00, 0 30px 40px rgba(0,0,0,0.4);
+    animation: shayariGlow 9s infinite;
+}
+@keyframes shayariGlow {
+    0%,100%{ filter: brightness(1); box-shadow: 0 25px 0 #004d00; }
+    50%{ filter: brightness(1.1); box-shadow: 0 25px 0 #FF4500; }
+}
+.shayari-text {
+    font-size: 3.2rem;
+    color: #FFD700;
+    line-height: 2;
+    text-shadow: 4px 4px 0 #006400;
+    white-space: pre-line;
+    font-weight: 600;
 }
 
 /* ===== गिफ्ट कार्ड ===== */
 .gift-card { 
-    background: linear-gradient(135deg, #ff7e5f, #f64b6b, #ff4d6d); 
+    background: linear-gradient(135deg, #8B0000, #B22222, #DC143C); 
     border-radius: 180px 60px 180px 60px; 
-    padding: 5rem 4rem; 
-    margin: 5rem 0 10rem 0; 
-    border: 8px solid #ffd966; 
-    box-shadow: 0 22px 0 #b34180, 0 25px 30px rgba(0,0,0,0.2); 
+    padding: 4rem 3rem; 
+    margin: 1.5rem 0 2rem 0;
+    border: 10px solid #FFD700; 
+    box-shadow: 0 25px 0 #4A0404, 0 30px 40px rgba(0,0,0,0.4); 
     animation: giftGlow 4s infinite; 
     text-align: center;
     position: relative;
@@ -569,20 +704,20 @@ body.site-visible #mainSite { opacity: 1; }
     clear: both;
 }
 @keyframes giftGlow { 
-    0%,100%{ box-shadow: 0 22px 0 #b34180; } 
-    50%{ box-shadow: 0 22px 0 #c44569; } 
+    0%,100%{ box-shadow: 0 25px 0 #4A0404; } 
+    50%{ box-shadow: 0 25px 0 #FF4500; } 
 }
 .gift-btn-super { 
-    background: linear-gradient(135deg, #ffd966, #ffb347); 
+    background: linear-gradient(135deg, #FFD700, #FFA500); 
     border: none; 
     font-size: 3rem; 
-    padding: 2.2rem 5rem; 
+    padding: 2rem 4rem; 
     border-radius: 140px; 
-    color: #9b1f3f; 
+    color: #8B0000; 
     font-weight: bold; 
-    border-bottom: 8px solid #b34180; 
+    border-bottom: 8px solid #8B0000; 
     cursor: pointer; 
-    margin-top: 2.5rem;
+    margin-top: 2rem;
     transition: all 0.2s ease;
 }
 .gift-btn-super:hover {
@@ -591,399 +726,67 @@ body.site-visible #mainSite { opacity: 1; }
 
 /* ===== म्यूजिक सेक्शन ===== */
 .music-wrapper { 
-    margin: 5rem 0 10rem 0; 
+    margin: 1.5rem 0 2rem 0;
     text-align: center; 
 }
 .music-btn { 
-    background: #8a4f8a; 
-    color: white; 
+    background: #4A0404; 
+    color: #FFD700; 
     font-size: 2.8rem; 
-    padding: 2.5rem 5rem; 
+    padding: 2rem 4rem; 
     border-radius: 120px; 
-    border-bottom: 8px solid #4f2e4f; 
+    border: 4px solid #FFD700;
+    border-bottom: 8px solid #2C1810; 
     cursor: pointer; 
     transition: all 0.2s ease;
 }
 .music-btn:hover {
     transform: scale(1.05);
+    background: #8B0000;
 }
 
-/* ===== UPI डोनेशन सेक्शन ===== */
-.upi-donation-card {
-    background: linear-gradient(135deg, #ffd166, #ffb347, #ff9f4d);
-    border-radius: 180px 60px 180px 60px;
-    padding: 6rem 5rem;
-    margin: 5rem 0 5rem 0;
-    border: 8px solid #b34180;
-    box-shadow: 0 25px 0 #732c5a, 0 30px 40px rgba(0,0,0,0.2);
-    text-align: center;
-    position: relative;
-    overflow: visible;
-    clear: both;
-    animation: upiGlow 4s infinite;
-}
-@keyframes upiGlow {
-    0%,100%{ box-shadow: 0 25px 0 #732c5a, 0 30px 40px rgba(0,0,0,0.2); }
-    50%{ box-shadow: 0 25px 0 #b34180, 0 35px 45px rgba(0,0,0,0.25); }
-}
-
-.upi-title {
-    font-size: 5rem;
-    color: #9b1f3f;
-    text-shadow: 5px 5px 0 #ffd966;
-    margin-bottom: 3rem;
-    font-family: 'Pacifico', cursive;
-}
-
-.upi-message {
-    font-size: 3.2rem;
-    color: white;
-    margin-bottom: 4rem;
-    line-height: 1.6;
-    text-shadow: 3px 3px 0 #b34180;
-    background: rgba(0,0,0,0.1);
-    padding: 2rem 3rem;
-    border-radius: 100px;
-    display: inline-block;
-    backdrop-filter: blur(5px);
-}
-
-.upi-app-icons {
-    display: flex;
-    justify-content: center;
-    gap: 30px;
-    margin: 3rem 0;
-    flex-wrap: wrap;
-}
-
-.upi-app-icon {
-    background: white;
-    width: 90px;
-    height: 90px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 4rem;
-    color: #9b1f3f;
-    border: 4px solid gold;
-    box-shadow: 0 10px 0 #b86b1f;
-    transition: all 0.2s ease;
-    cursor: pointer;
-}
-.upi-app-icon:hover {
-    transform: scale(1.1);
-    box-shadow: 0 12px 0 #b86b1f;
-}
-
-.upi-buttons {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 25px;
-    margin: 4rem 0;
-}
-
-.upi-pay-btn {
-    background: white;
-    color: #9b1f3f;
-    font-size: 2.8rem;
-    padding: 2.5rem 4rem;
-    border-radius: 120px;
-    border: none;
-    border-bottom: 10px solid #b86b1f;
-    cursor: pointer;
-    display: inline-flex;
-    align-items: center;
-    gap: 15px;
-    transition: all 0.2s ease;
-    box-shadow: 0 20px 30px rgba(0,0,0,0.2);
-    font-weight: bold;
-    min-width: 200px;
-    justify-content: center;
-}
-
-.upi-pay-btn i {
-    font-size: 3.5rem;
-    color: #25D366;
-}
-
-.upi-pay-btn:hover {
-    transform: scale(1.08);
-    background: #f0f0f0;
-}
-
-.upi-custom-amount {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 15px;
-    margin: 3rem 0;
-    flex-wrap: wrap;
-}
-
-.upi-custom-input {
-    font-size: 2.5rem;
-    padding: 1.8rem 2.5rem;
-    border-radius: 80px;
-    border: 6px solid gold;
-    width: 250px;
-    text-align: center;
-    font-family: 'Baloo 2', sans-serif;
-    outline: none;
-}
-
-.upi-custom-btn {
-    background: #9b1f3f;
-    color: white;
-    font-size: 2.5rem;
-    padding: 1.8rem 3.5rem;
-    border-radius: 80px;
-    border: none;
-    border-bottom: 8px solid #4f2e4f;
-    cursor: pointer;
-    transition: all 0.2s ease;
-}
-.upi-custom-btn:hover {
-    transform: scale(1.05);
-}
-
-.upi-qr-container {
-    margin: 3rem 0 2rem 0;
-    padding: 3rem;
-    background: white;
-    border-radius: 100px;
-    display: inline-block;
-    border: 8px solid gold;
-    box-shadow: 0 20px 0 #b86b1f;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    position: relative;
-}
-.upi-qr-container:hover {
-    transform: scale(1.02);
-    box-shadow: 0 22px 0 #b86b1f;
-}
-.upi-qr-container::after {
-    content: "🔍 क्लिक करें QR स्कैन करने के लिए";
-    position: absolute;
-    bottom: -50px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: #9b1f3f;
-    color: white;
-    padding: 1rem 2rem;
-    border-radius: 60px;
-    font-size: 1.8rem;
-    white-space: nowrap;
-    opacity: 0;
-    transition: all 0.3s ease;
-    pointer-events: none;
-    border-bottom: 4px solid #4f2e4f;
-}
-.upi-qr-container:hover::after {
-    opacity: 1;
-    bottom: -60px;
-}
-
-.upi-qr-img {
-    width: 350px;
-    height: 350px;
-    border-radius: 50px;
-    cursor: pointer;
-}
-
-.upi-note {
-    font-size: 2.5rem;
-    color: #4a235a;
-    margin-top: 4rem;
-    font-weight: 600;
-    text-shadow: 1px 1px 0 #ffd966;
-}
-
-.upi-id-display {
-    font-size: 2.8rem;
-    background: rgba(255,255,255,0.4);
-    padding: 2rem 4rem;
-    border-radius: 120px;
-    display: inline-block;
-    margin: 2rem 0;
-    border: 6px solid gold;
-    color: #9b1f3f;
-    font-weight: bold;
-    backdrop-filter: blur(5px);
-}
-
-/* ===== नीचे वाला शेयर सेक्शन ===== */
-.share-card-bottom { 
-    background: linear-gradient(135deg, #d4edff, #b8e2ff, #9bd6ff); 
-    border-radius: 120px 120px 60px 60px; 
-    padding: 4rem; 
-    margin: 5rem 0; 
-    border: 8px solid #ff7f9f; 
-    box-shadow: 0 22px 0 #b34360, 0 25px 30px rgba(0,0,0,0.2); 
-    position: relative;
-    overflow: visible;
-    clear: both;
-    text-align: center;
-}
-.name-input-bottom { 
-    padding: 2.2rem 3rem; 
-    width: 90%; 
-    border: 8px solid #ec4e7a; 
-    border-radius: 120px; 
-    font-size: 2.5rem; 
-    margin: 2.5rem 0;
-    font-family: 'Baloo 2', sans-serif;
-}
-.whatsapp-share-btn-bottom { 
-    background: #25D366; 
-    color: white; 
-    font-size: 2.8rem; 
-    padding: 2.2rem 5rem; 
-    border-radius: 120px; 
-    border-bottom: 8px solid #128C7E; 
-    cursor: pointer; 
-    margin-top: 2rem; 
-    display: inline-flex;
-    align-items: center;
-    gap: 15px;
-    transition: all 0.2s ease;
-}
-.whatsapp-share-btn-bottom:hover {
-    transform: scale(1.05);
-}
-
-/* ===== इमोजी रनर - पतली लाइन (9px) ===== */
-.ant-boundary { 
-    position: fixed; 
-    inset: 0; 
-    pointer-events: none; 
-    z-index: 9999; 
-    opacity: 0.4; 
-    height: 100%;
-    width: 100%;
-    border: 1px solid transparent;
-}
-.ant-emoji { 
-    position: absolute; 
-    font-size: 2.2rem; 
-    filter: drop-shadow(0 2px 3px rgba(0,0,0,0.15)); 
-    color: rgba(255,120,100,0.5);
-    transition: all 0.03s linear;
-}
-
-/* ===== गिफ्ट मोडल ===== */
-#giftModal { 
-    position: fixed; 
-    inset: 0; 
-    background: rgba(0, 0, 0, 0.95); 
-    display: none; 
-    align-items: center; 
-    justify-content: center; 
-    z-index: 20000; 
-}
-.modal-content { 
-    background: linear-gradient(135deg, #ffd166, #ffb347); 
-    padding: 5rem; 
-    border-radius: 180px 60px 180px 60px; 
-    text-align: center; 
-    border: 8px solid #ff4d6d; 
-    max-width: 90%;
-}
-.modal-content h2 {
-    font-size: 5rem;
-    margin-bottom: 2rem;
-}
-.modal-content p {
-    font-size: 3rem;
-    margin: 1.5rem 0;
-}
-.close-modal-btn {
-    background: #ff4d6d;
-    color: white;
-    border: none;
-    font-size: 3rem;
-    padding: 2rem 5rem;
-    border-radius: 120px;
-    margin-top: 3rem;
-    cursor: pointer;
-    border-bottom: 8px solid #b33a2f;
-    transition: all 0.2s ease;
-}
-.close-modal-btn:hover {
-    transform: scale(1.05);
-}
-
-/* ===== रिस्पॉन्सिव डिजाइन ===== */
-@media (max-width: 1200px) {
-    .bottom-image { width: 320px; height: 320px; }
-    .upi-pay-btn { font-size: 2.5rem; padding: 2rem 3rem; }
-}
-
-@media (max-width: 768px) {
-    .bottom-image { width: 240px; height: 240px; }
-    .big-image { min-height: 450px; }
-    .gif-card-image { min-height: 350px; }
-    .ant-emoji { font-size: 1.8rem; }
-    .upi-pay-btn { font-size: 2.2rem; padding: 1.8rem 2.5rem; }
-    .upi-title { font-size: 3.5rem; }
-    .upi-message { font-size: 2.5rem; }
-    .upi-qr-img { width: 250px; height: 250px; }
-    .upi-app-icon { width: 70px; height: 70px; font-size: 3rem; }
-}
-
-@media (max-width: 480px) {
-    .bottom-image { width: 180px; height: 180px; }
-    .big-image { min-height: 350px; }
-}
-
-@media (min-width: 769px) {
-    .big-image { min-height: 800px; }
-    .gif-card-image { min-height: 550px; }
-}
-
-/* ===== नए आकर्षक एड बैनर स्टाइल ===== */
-/* सुपर गिफ्ट बैनर */
+/* ===== नए आकर्षक एड बैनर स्टाइल (और बड़े किए गए) ===== */
 .super-gift-banner {
-    margin: 4rem 0;
-    background: linear-gradient(145deg, #ff7e5f, #f64b6b, #ff4d6d);
+    background: linear-gradient(145deg, #8B0000, #B22222, #DC143C);
     border-radius: 200px 60px 200px 60px;
-    padding: 4rem 3rem;
-    border: 10px solid gold;
-    box-shadow: 0 25px 0 #b34180, 0 30px 40px rgba(0,0,0,0.3);
+    padding: 6rem 5rem;  /* पैडिंग और बढ़ाई */
+    border: 14px solid #FFD700;  /* बॉर्डर और मोटा */
+    box-shadow: 0 35px 0 #4A0404, 0 45px 60px rgba(0,0,0,0.6);
     text-align: center;
     position: relative;
     overflow: hidden;
     animation: superBannerGlow 2s infinite;
+    margin: 2.5rem 0;
 }
 @keyframes superBannerGlow {
-    0%,100%{ box-shadow: 0 25px 0 #b34180, 0 30px 40px rgba(0,0,0,0.3); }
-    50%{ box-shadow: 0 25px 0 #b34180, 0 40px 60px #ff4d6d; }
+    0%,100%{ box-shadow: 0 35px 0 #4A0404, 0 45px 60px rgba(0,0,0,0.6); }
+    50%{ box-shadow: 0 35px 0 #FF4500, 0 55px 80px rgba(255,69,0,0.7); }
 }
 .super-gift-banner::before {
     content: "🎁🎁🎁";
     position: absolute;
-    top: -20px;
-    left: -20px;
-    font-size: 8rem;
+    top: -30px;
+    left: -30px;
+    font-size: 14rem;  /* और बड़ा */
     opacity: 0.2;
     transform: rotate(-15deg);
+    color: #FFD700;
 }
 .super-gift-banner::after {
     content: "💰💰💰";
     position: absolute;
-    bottom: -20px;
-    right: -20px;
-    font-size: 8rem;
+    bottom: -30px;
+    right: -30px;
+    font-size: 14rem;
     opacity: 0.2;
     transform: rotate(15deg);
+    color: #FFD700;
 }
 .super-gift-banner h3 {
-    font-size: 5rem;
-    color: white;
-    text-shadow: 5px 5px 0 #b34180;
-    margin-bottom: 2rem;
+    font-size: 7rem;  /* टेक्स्ट और बड़ा */
+    color: #FFD700;
+    text-shadow: 8px 8px 0 #8B0000;
+    margin-bottom: 2.5rem;
     font-family: 'Pacifico', cursive;
     animation: textBlink 1.5s infinite;
 }
@@ -992,159 +795,430 @@ body.site-visible #mainSite { opacity: 1; }
     50%{ opacity: 0.9; transform: scale(1.02); }
 }
 .super-gift-banner p {
-    font-size: 3.5rem;
-    color: #fffbcb;
-    margin: 2rem 0;
+    font-size: 5rem;  /* टेक्स्ट और बड़ा */
+    color: white;
+    margin: 2.5rem 0;
+    text-shadow: 3px 3px 0 #8B0000;
 }
 .super-gift-banner .count {
-    background: rgba(255,255,255,0.2);
-    padding: 1.5rem;
-    border-radius: 100px;
-    font-size: 3rem;
-    color: gold;
-    margin: 2rem auto;
-    max-width: 400px;
+    background: rgba(255,215,0,0.2);
+    padding: 2.5rem;
+    border-radius: 120px;
+    font-size: 4rem;
+    color: #FFD700;
+    margin: 2.5rem auto;
+    max-width: 600px;
+    border: 5px solid #FFD700;
+    backdrop-filter: blur(5px);
 }
 .super-gift-banner button {
-    background: linear-gradient(145deg, gold, #ffb347);
+    background: linear-gradient(145deg, #FFD700, #FFA500);
     border: none;
-    font-size: 3.5rem;
-    padding: 2rem 5rem;
-    border-radius: 150px;
-    color: #9b1f3f;
+    font-size: 5rem;  /* बटन टेक्स्ट और बड़ा */
+    padding: 3rem 7rem;
+    border-radius: 170px;
+    color: #8B0000;
     font-weight: bold;
-    border-bottom: 10px solid #b86b1f;
+    border-bottom: 15px solid #8B0000;
     cursor: pointer;
     animation: superButtonPulse 1s infinite;
+    box-shadow: 0 15px 25px rgba(0,0,0,0.4);
 }
 @keyframes superButtonPulse {
     0%,100%{ transform: scale(1); }
     50%{ transform: scale(1.1); }
 }
 
-/* लकी ड्रॉ बैनर (नया) */
+/* लकी ड्रॉ बैनर - और बड़ा */
 .lucky-draw-banner {
-    margin: 4rem 0;
-    background: linear-gradient(135deg, #8a4f8a, #9b59b6, #c56cf0);
-    border-radius: 150px 40px 150px 40px;
-    padding: 4rem 3rem;
-    border: 10px solid gold;
-    box-shadow: 0 25px 0 #6c5ce7;
+    background: linear-gradient(145deg, #4B0082, #8A2BE2, #9370DB);
+    border-radius: 200px 60px 200px 60px;
+    padding: 5rem;
+    border: 14px solid gold;
+    box-shadow: 0 35px 0 #2E0854, 0 45px 60px rgba(0,0,0,0.6);
     text-align: center;
+    margin: 2.5rem 0;
     position: relative;
-}
-.lucky-draw-banner .wheel {
-    font-size: 6rem;
-    animation: spinWheel 5s infinite;
-}
-@keyframes spinWheel {
-    0%,100%{ transform: rotate(0deg); }
-    25%{ transform: rotate(180deg); }
-    50%{ transform: rotate(360deg); }
+    overflow: hidden;
 }
 .lucky-draw-banner h4 {
-    font-size: 4rem;
-    color: white;
-    text-shadow: 4px 4px 0 #b34180;
+    font-size: 6rem;
+    color: gold;
+    text-shadow: 6px 6px 0 #4B0082;
+    margin-bottom: 2.5rem;
+}
+.lucky-draw-banner .wheel {
+    font-size: 9rem;
+    margin: 2.5rem 0;
+    animation: spinWheel 4s infinite linear;
+}
+@keyframes spinWheel {
+    0%{ transform: rotate(0deg); }
+    100%{ transform: rotate(360deg); }
 }
 .lucky-draw-banner .prize-box {
-    background: white;
-    border-radius: 80px;
-    padding: 2rem;
-    font-size: 3rem;
-    color: #9b1f3f;
-    margin: 2rem auto;
-    max-width: 500px;
-    animation: prizePulse 2s infinite;
+    background: rgba(255,215,0,0.2);
+    padding: 2.5rem;
+    border-radius: 120px;
+    border: 5px solid gold;
+    margin: 2.5rem auto;
+    width: fit-content;
 }
-@keyframes prizePulse {
-    0%,100%{ transform: scale(1); background: white; }
-    50%{ transform: scale(1.05); background: #fffbcb; }
+.lucky-draw-banner p {
+    font-size: 4rem;
+    color: white;
 }
 
-/* कैश ब्लास्ट बैनर */
+/* कैश ब्लास्ट बैनर - और बड़ा */
 .cash-blast-banner {
-    margin: 4rem 0;
-    background: linear-gradient(90deg, #00b894, #00cec9, #00a8ff);
-    border-radius: 100px 30px 100px 30px;
-    padding: 3rem;
-    border: 8px solid gold;
-    box-shadow: 0 20px 0 #00a8ff;
+    background: linear-gradient(145deg, #006400, #228B22, #32CD32);
+    border-radius: 200px 60px 200px 60px;
+    padding: 5rem;
+    border: 14px solid gold;
+    box-shadow: 0 35px 0 #004d00, 0 45px 60px rgba(0,0,0,0.6);
     text-align: center;
+    margin: 2.5rem 0;
+    position: relative;
+    overflow: hidden;
 }
 .cash-blast-banner marquee {
-    font-size: 3.5rem;
-    color: white;
-    margin-bottom: 2rem;
+    font-size: 5rem;
+    color: gold;
+    margin-bottom: 2.5rem;
+    background: rgba(0,100,0,0.5);
+    padding: 2rem;
+    border-radius: 120px;
 }
 .cash-blast-banner .cash-amount {
-    font-size: 4rem;
+    font-size: 6rem;
     color: gold;
-    background: rgba(0,0,0,0.2);
-    padding: 1.5rem;
-    border-radius: 60px;
-    margin: 2rem 0;
+    text-shadow: 5px 5px 0 #006400;
+    margin: 2.5rem 0;
+    background: rgba(255,215,0,0.1);
+    padding: 2.5rem;
+    border-radius: 120px;
+    border: 5px solid gold;
 }
 .cash-blast-banner .claim-btn {
     background: gold;
     border: none;
-    font-size: 3rem;
-    padding: 2rem 5rem;
-    border-radius: 120px;
-    color: #9b1f3f;
+    font-size: 4.5rem;
+    padding: 2.5rem 6rem;
+    border-radius: 150px;
+    color: #006400;
     font-weight: bold;
-    border-bottom: 8px solid #b86b1f;
+    border-bottom: 10px solid #006400;
     cursor: pointer;
+    margin-top: 2.5rem;
 }
 
-/* मिनी आकर्षक बैनर */
-.mini-attractive-banner {
-    margin: 3rem 0;
-    background: linear-gradient(90deg, #ff6b6b, #ffb347, #4da8ff);
-    background-size: 200% 200%;
-    animation: gradientMove 3s infinite;
-    border-radius: 80px;
-    padding: 2.5rem;
-    border: 6px solid gold;
-    box-shadow: 0 15px 0 #b34180;
-    text-align: center;
-}
-@keyframes gradientMove {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
-}
-.mini-attractive-banner p {
-    font-size: 2.8rem;
-    color: white;
-}
-.mini-attractive-banner i {
-    margin: 0 1rem;
-    color: gold;
-    animation: iconJump 1s infinite;
-}
-
-/* रोलिंग ऑफर बैनर */
+/* रोलिंग ऑफर बैनर - और बड़ा */
 .rolling-offer-banner {
-    margin: 4rem 0;
-    background: linear-gradient(145deg, #ff9f43, #f368e0);
-    border-radius: 80px;
-    padding: 2rem;
-    border: 8px solid gold;
-    box-shadow: 0 20px 0 #b34180;
+    background: linear-gradient(145deg, #8B4513, #CD853F, #DEB887);
+    border-radius: 120px;
+    padding: 3rem;
+    border: 12px solid gold;
+    box-shadow: 0 25px 0 #5D3A1A, 0 35px 45px rgba(0,0,0,0.5);
+    margin: 2.5rem 0;
 }
 .rolling-offer-banner marquee {
+    font-size: 4.5rem;
+    color: gold;
+    text-shadow: 3px 3px 0 #8B4513;
+}
+
+/* मिनी अट्रैक्टिव बैनर - और बड़ा */
+.mini-attractive-banner {
+    background: linear-gradient(145deg, #FF1493, #FF69B4, #FFB6C1);
+    border-radius: 100px;
+    padding: 3rem;
+    border: 10px solid gold;
+    box-shadow: 0 20px 0 #C71585, 0 25px 35px rgba(0,0,0,0.45);
+    text-align: center;
+    margin: 2.5rem 0;
+    animation: miniPulse 1.5s infinite;
+}
+@keyframes miniPulse {
+    0%,100%{ transform: scale(1); }
+    50%{ transform: scale(1.02); }
+}
+.mini-attractive-banner p {
+    font-size: 4rem;
+    color: white;
+    text-shadow: 3px 3px 0 #FF1493;
+}
+
+/* ===== UPI डोनेशन सेक्शन (लड़की की तस्वीर बहुत बड़ी) ===== */
+.upi-donation-card {
+    background: linear-gradient(135deg, #2C1810, #4A2515, #6B3E1F);
+    border-radius: 180px 60px 180px 60px;
+    padding: 4rem 5rem;
+    margin: 2rem 0;
+    border: 10px solid #FFD700;
+    box-shadow: 0 25px 0 #8B0000, 0 30px 40px rgba(0,0,0,0.4);
+    text-align: center;
+    position: relative;
+    overflow: visible;
+    clear: both;
+    animation: upiGlow 4s infinite;
+}
+@keyframes upiGlow {
+    0%,100%{ box-shadow: 0 25px 0 #8B0000, 0 30px 40px rgba(0,0,0,0.4); }
+    50%{ box-shadow: 0 25px 0 #FF4500, 0 35px 45px rgba(0,0,0,0.45); }
+}
+
+/* लड़की की तस्वीर - अब और भी बड़ी और आकर्षक */
+.upi-girl-image {
+    width: 500px;
+    height: 500px;
+    border-radius: 50%;
+    border: 18px solid #FFD700;
+    box-shadow: 0 30px 0 #8B0000, 0 35px 40px rgba(0,0,0,0.5), 0 0 40px rgba(255,215,0,0.6);
+    margin: 0 2rem 2rem auto;
+    float: left;
+    object-fit: cover;
+    animation: girlImageUltraFloat 7s infinite ease-in-out;
+    filter: brightness(1.1) contrast(1.15) saturate(1.1);
+    transition: all 0.4s ease;
+}
+.upi-girl-image:hover {
+    transform: scale(1.08) rotate(3deg);
+    box-shadow: 0 35px 0 #8B0000, 0 40px 50px rgba(0,0,0,0.6), 0 0 60px gold;
+    border-color: #FFA500;
+}
+@keyframes girlImageUltraFloat {
+    0%,100%{ transform: translateY(0) rotate(0deg) scale(1); }
+    20%{ transform: translateY(-15px) rotate(-2deg) scale(1.02); }
+    40%{ transform: translateY(-8px) rotate(2deg) scale(1.01); }
+    60%{ transform: translateY(-12px) rotate(-1deg) scale(1.02); }
+    80%{ transform: translateY(-5px) rotate(1deg) scale(1.01); }
+}
+
+.upi-title {
+    font-size: 5rem;
+    color: #FFD700;
+    text-shadow: 5px 5px 0 #8B0000;
+    margin-bottom: 2rem;
+    font-family: 'Pacifico', cursive;
+    clear: both;
+}
+.upi-message {
     font-size: 3rem;
     color: white;
-}
-.rolling-offer-banner span {
-    margin: 0 3rem;
+    margin-bottom: 3rem;
+    line-height: 1.6;
+    text-shadow: 3px 3px 0 #8B0000;
+    background: rgba(139,0,0,0.3);
+    padding: 2rem 3rem;
+    border-radius: 100px;
     display: inline-block;
+    backdrop-filter: blur(5px);
+    border: 2px solid #FFD700;
+    clear: both;
 }
-.rolling-offer-banner i {
-    color: gold;
-    font-size: 3.5rem;
-    margin: 0 1rem;
+.upi-app-icons {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    margin: 2.5rem 0;
+    flex-wrap: wrap;
+    clear: both;
+}
+.upi-app-icon {
+    font-size: 4rem;
+    color: #FFD700;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    padding: 1rem;
+    background: rgba(255,215,0,0.1);
+    border-radius: 50%;
+    width: 100px;
+    height: 100px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 4px solid #FFD700;
+}
+.upi-app-icon:hover {
+    transform: scale(1.1);
+    background: #FFD700;
+    color: #8B0000;
+}
+.upi-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 25px;
+    margin: 3rem 0;
+    clear: both;
+}
+.upi-pay-btn {
+    background: linear-gradient(145deg, #FFD700, #FFA500);
+    border: none;
+    font-size: 2.5rem;
+    padding: 1.5rem 3rem;
+    border-radius: 100px;
+    color: #8B0000;
+    font-weight: bold;
+    border-bottom: 6px solid #8B0000;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.upi-pay-btn:hover {
+    transform: scale(1.05);
+}
+.upi-custom-amount {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+    margin: 2.5rem 0;
+    flex-wrap: wrap;
+    clear: both;
+}
+.upi-custom-input {
+    font-size: 2.5rem;
+    padding: 1.5rem 2rem;
+    border-radius: 80px;
+    border: 6px solid #FFD700;
+    width: 250px;
+    font-family: 'Baloo 2', sans-serif;
+    background: white;
+    color: #8B0000;
+    font-weight: bold;
+}
+.upi-custom-btn {
+    background: linear-gradient(145deg, #FFD700, #FFA500);
+    border: none;
+    font-size: 2.5rem;
+    padding: 1.5rem 3rem;
+    border-radius: 100px;
+    color: #8B0000;
+    font-weight: bold;
+    border-bottom: 6px solid #8B0000;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+.upi-custom-btn:hover {
+    transform: scale(1.05);
+}
+.upi-id-display {
+    font-size: 2.8rem;
+    background: rgba(255,215,0,0.2);
+    padding: 2rem 4rem;
+    border-radius: 120px;
+    display: inline-block;
+    margin: 2rem 0;
+    border: 6px solid #FFD700;
+    color: #FFD700;
+    font-weight: bold;
+    backdrop-filter: blur(5px);
+    clear: both;
+}
+.upi-qr-container {
+    margin: 3rem 0 2rem 0;
+    padding: 3rem;
+    background: #FFD700;
+    border-radius: 100px;
+    display: inline-block;
+    border: 8px solid #8B0000;
+    box-shadow: 0 20px 0 #4A0404;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    position: relative;
+    float: right;
+    width: auto;
+}
+.upi-qr-container:hover {
+    transform: scale(1.02);
+    box-shadow: 0 22px 0 #4A0404;
+}
+.upi-qr-img {
+    width: 300px;
+    height: 300px;
+    border-radius: 50px;
+    cursor: pointer;
+}
+.upi-note {
+    font-size: 2.5rem;
+    color: #FFD700;
+    margin-top: 4rem;
+    font-weight: 600;
+    text-shadow: 1px 1px 0 #8B0000;
+    clear: both;
+}
+
+/* ===== नीचे वाला संयुक्त शेयर सेक्शन ===== */
+.share-card-bottom { 
+    background: linear-gradient(135deg, #4A0404, #800000, #8B0000); 
+    border-radius: 120px 120px 60px 60px; 
+    padding: 4rem; 
+    margin: 2rem 0 3rem 0;
+    border: 10px solid #FFD700; 
+    box-shadow: 0 25px 0 #2C1810, 0 30px 40px rgba(0,0,0,0.4); 
+    position: relative;
+    overflow: visible;
+    clear: both;
+    text-align: center;
+}
+.name-input-bottom { 
+    padding: 2.2rem 3rem; 
+    width: 90%; 
+    border: 8px solid #FFD700; 
+    border-radius: 120px; 
+    font-size: 2.5rem; 
+    margin: 2rem 0;
+    font-family: 'Baloo 2', sans-serif;
+    background: white;
+    color: #8B0000;
+}
+.bottom-share-buttons {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 25px;
+    flex-wrap: wrap;
+    margin: 2rem 0 1rem 0;
+}
+.whatsapp-share-btn-bottom, .telegram-share-btn-bottom { 
+    color: #FFD700; 
+    font-size: 2.8rem; 
+    padding: 2rem 4rem; 
+    border-radius: 120px; 
+    border: 4px solid #FFD700;
+    border-bottom: 8px solid #2C1810; 
+    cursor: pointer; 
+    display: inline-flex;
+    align-items: center;
+    gap: 15px;
+    transition: all 0.2s ease;
+    font-weight: 600;
+}
+.whatsapp-share-btn-bottom:hover, .telegram-share-btn-bottom:hover {
+    transform: scale(1.05);
+}
+.whatsapp-share-btn-bottom {
+    background: #25D366;
+    color: white;
+}
+.telegram-share-btn-bottom {
+    background: #0088cc;
+    color: white;
+}
+
+/* ===== नेटिव बैनर - सबसे नीचे के लिए ===== */
+.native-ad-bottom {
+    margin: 3rem 0 2rem 0;
+    clear: both;
+    text-align: center;
+    padding: 2rem;
+    background: linear-gradient(145deg, #f0e6d2, #e0d4b8);
+    border-radius: 80px 80px 30px 30px;
+    border: 8px solid gold;
+    box-shadow: 0 20px 0 #b86b1f, 0 25px 30px rgba(0,0,0,0.3);
 }
 
 /* फिंगर पॉइंटर एनिमेशन */
@@ -1157,17 +1231,90 @@ body.site-visible #mainSite { opacity: 1; }
     0%,100%{ transform: translateX(0); }
     50%{ transform: translateX(20px); }
 }
+
+/* गिफ्ट मोडल */
+#giftModal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.8);
+    z-index: 20000;
+    align-items: center;
+    justify-content: center;
+}
+.modal-content {
+    background: linear-gradient(145deg, #fff8e7, #ffdab9);
+    padding: 5rem;
+    border-radius: 120px;
+    border: 15px solid gold;
+    text-align: center;
+    max-width: 90%;
+    animation: modalPop 0.3s ease;
+}
+@keyframes modalPop {
+    0%{ transform: scale(0.5); opacity: 0; }
+    100%{ transform: scale(1); opacity: 1; }
+}
+.close-modal-btn {
+    background: #8B0000;
+    color: gold;
+    font-size: 3rem;
+    padding: 1.5rem 4rem;
+    border: none;
+    border-radius: 100px;
+    cursor: pointer;
+    margin-top: 2rem;
+    border-bottom: 6px solid #4A0404;
+}
+
+/* क्लियर फिक्सेस */
+.clearfix::after {
+    content: "";
+    clear: both;
+    display: table;
+}
 </style>
 </head>
 <body>
 
-<!-- पर्दा (कर्टेन) - MP3 गाने के साथ (शुरू से प्ले) - अब और आकर्षक -->
+<!-- स्वागत इफेक्ट के लिए कैनवास -->
+<canvas id="welcomeCanvas"></canvas>
+
+<!-- पर्दा (कर्टेन) - MP3 गाने के साथ (शुरू से प्ले) -->
 <div id="curtain">
     <div class="curtain-panel left"></div>
     <div class="curtain-panel right"></div>
+    
+    <!-- चारों कोनों पर एड (अब कोई अतिरिक्त इमेज नहीं) -->
+    <div class="corner-ads">
+        <div class="corner-ad-box top-left" onclick="window.open('https://www.effectivegatecpm.com/myapk14m?key=70522133966864451967af5eb2752e07', '_blank')">
+            <i class="fas fa-gift"></i>
+            <p>🎊 होली बोनस 🎊</p>
+            <span>क्लिक करें</span>
+        </div>
+        <div class="corner-ad-box top-right" onclick="window.open('https://www.effectivegatecpm.com/myapk14m?key=70522133966864451967af5eb2752e07', '_blank')">
+            <i class="fas fa-rupee-sign"></i>
+            <p>💰 कैश प्राइज 💰</p>
+            <span>जीतें</span>
+        </div>
+        <div class="corner-ad-box bottom-left" onclick="window.open('https://www.effectivegatecpm.com/myapk14m?key=70522133966864451967af5eb2752e07', '_blank')">
+            <i class="fas fa-ticket-alt"></i>
+            <p>🎫 लकी ड्रॉ 🎫</p>
+            <span>यहाँ</span>
+        </div>
+        <div class="corner-ad-box bottom-right" onclick="window.open('https://www.effectivegatecpm.com/myapk14m?key=70522133966864451967af5eb2752e07', '_blank')">
+            <i class="fas fa-star"></i>
+            <p>✨ स्पेशल ऑफर ✨</p>
+            <span>अभी</span>
+        </div>
+    </div>
+    
     <div id="curtain-center">
         <div class="magic-card">
-            <!-- ऑडियो प्लेयर - बिना कंट्रोल के (सिर्फ बैकग्राउंड में) -->
+            <!-- ऑडियो प्लेयर -->
             <audio id="holiAudio" loop preload="auto" style="display: none;">
                 <source src="https://raw.githubusercontent.com/sunitadevi6391657566-debug/Holi-wishing-script-/main/holisong.mp3" type="audio/mpeg">
             </audio>
@@ -1179,29 +1326,31 @@ body.site-visible #mainSite { opacity: 1; }
                 </p>
             </div>
             
-            <h1 style="font-size:4rem; margin: 1rem 0;">🌸 होली मुबारक 🌸</h1>
-            <div style="display: flex; justify-content: center; gap: 2rem; margin: 1rem 0;">
+            <!-- आकर्षक टेक्स्ट -->
+            <h1 style="font-size:4rem; margin: 1rem 0;">🌸 सारे शिकवे गिले भुला कर 🌸</h1>
+            <p style="font-size:3rem;">अपनों को भेजिए होली की शुभकामनाएं</p>
+            <div style="display: flex; justify-content: center; gap: 2rem; margin: 2rem 0;">
                 <span class="finger-pointer">👉</span>
-                <p style="font-size:3rem;">टैप करें शुरू करने के लिए</p>
+                <p style="font-size:3rem;">जादू से भरी शुभकामनाएं</p>
                 <span class="finger-pointer">👈</span>
             </div>
+            <p style="font-size:3rem;">अभी क्लिक करके ओपन करें और देखें</p>
             <div style="font-size:5rem; margin-top: 1rem;">🌈🎨💧</div>
         </div>
     </div>
 </div>
 
-<!-- इमोजी रनर - पतली लाइन (9px) -->
-<div class="ant-boundary" id="antContainer"></div>
-
-<!-- फ्लोटिंग व्हाट्सएप कंटेनर - नाम बॉक्स के साथ -->
-<div class="whatsapp-share-container">
-    <div class="whatsapp-name-box">
-        <input type="text" id="floatingNameInput" placeholder="आपका नाम">
-        <button id="floatingShareBtn">शेयर करें</button>
+<!-- संयुक्त फ्लोटिंग शेयर बॉक्स (WhatsApp + Telegram) -->
+<div class="floating-share-container">
+    <div class="floating-share-box">
+        <input type="text" id="floatingNameInput" class="floating-name-input" placeholder="आपका नाम">
+        <button class="floating-btn telegram" id="floatingTelegramBtn">
+            <i class="fab fa-telegram-plane"></i> शेयर
+        </button>
+        <button class="floating-btn whatsapp" id="floatingWhatsappBtn">
+            <i class="fab fa-whatsapp"></i> शेयर
+        </button>
     </div>
-    <button class="floating-whatsapp" id="floatingWhatsappBtn">
-        <i class="fab fa-whatsapp"></i> व्हाट्सएप
-    </button>
 </div>
 
 <!-- मुख्य साइट -->
@@ -1213,7 +1362,14 @@ body.site-visible #mainSite { opacity: 1; }
         <div class="sender-name-value" id="senderNameDisplay">आपका परिवार</div>
     </div>
 
-    <!-- एड 1 -->
+    <!-- तीन नई इमेज (नाम बॉक्स के नीचे) -->
+    <div class="top-three-images">
+        <img src="https://uploads.onecompiler.io/44ewsfx3x/44f3d85ws/GIF_20260301_222927_901.gif" class="top-image">
+        <img src="https://uploads.onecompiler.io/44ewsfx3x/44f3d85ws/GIF_20260301_222644_160.gif" class="top-image">
+        <img src="https://uploads.onecompiler.io/44ewsfx3x/44f3d85ws/GIF_20260225_202933_890.gif" class="top-image">
+    </div>
+
+    <!-- एड 1 (पुराना) -->
     <div class="ad-container">
         <ins class="adsbygoogle"
              style="display:block"
@@ -1222,17 +1378,32 @@ body.site-visible #mainSite { opacity: 1; }
              data-ad-format="auto"></ins>
         <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
     </div>
-<script>
-  atOptions = {
-    'key' : 'a588af03cb478e73230690b7942d3a89',
-    'format' : 'iframe',
-    'height' : 90,
-    'width' : 728,
-    'params' : {}
-  };
-</script>
-<script src="https://www.highperformanceformat.com/a588af03cb478e73230690b7942d3a89/invoke.js"></script>
-    <!-- ===== सभी बड़ी इमेजेज एक बार ===== -->
+    
+    <!-- नया एड स्क्रिप्ट 1 (a588af03...) - छोटा एड -->
+    <script>
+      atOptions = {
+        'key' : 'a588af03cb478e73230690b7942d3a89',
+        'format' : 'iframe',
+        'height' : 90,
+        'width' : 728,
+        'params' : {}
+      };
+    </script>
+    <script src="https://www.highperformanceformat.com/a588af03cb478e73230690b7942d3a89/invoke.js"></script>
+    
+    <!-- नया एड स्क्रिप्ट 2 (6af46e8...) - छोटा एड -->
+    <script>
+      atOptions = {
+        'key' : '6af46e8ca474f76f619365d0ed6f0ad2',
+        'format' : 'iframe',
+        'height' : 60,
+        'width' : 468,
+        'params' : {}
+      };
+    </script>
+    <script src="https://www.highperformanceformat.com/6af46e8ca474f76f619365d0ed6f0ad2/invoke.js"></script>
+    
+    <!-- ===== सभी बड़ी इमेजेज ===== -->
     
     <!-- बड़ी इमेज 1 -->
     <div class="big-image-card">
@@ -1244,14 +1415,14 @@ body.site-visible #mainSite { opacity: 1; }
         <img src="https://uploads.onecompiler.io/44eucr92b/44eucrb95/GIF_20260227_131009_948.gif" class="bottom-image">
         <img src="https://uploads.onecompiler.io/44ewsfx3x/44exp7b45/GIF_20260228_164841_559.gif" class="bottom-image">
     </div>
-<div id="container-ad6b84cb1eb8f348b0b4334a9979b6dd"></div>
-    <!-- नया सुपर गिफ्ट बैनर (10668103) -->
+    
+    <!-- नया एड बैनर 1 (10668103) - बड़ा आकर्षक बॉक्स -->
     <div class="super-gift-banner">
         <a href="https://omg10.com/4/10668103" target="_blank" style="text-decoration: none;">
             <h3>🎊 सुपर होली गिफ्ट 🎊</h3>
             <p>10,000+ लोग पहले ही जीत चुके हैं!</p>
             <div class="count">⏰ सिर्फ 100 गिफ्ट बाकी ⏰</div>
-            <div style="font-size: 5rem; margin: 2rem 0;">💰🎁💎</div>
+            <div style="font-size: 6rem; margin: 2rem 0;">💰🎁💎</div>
             <button>अभी क्लेम करें 👆</button>
         </a>
     </div>
@@ -1267,7 +1438,7 @@ body.site-visible #mainSite { opacity: 1; }
         <img src="https://uploads.onecompiler.io/43fcd56ek/44eucj7bj/GIF_20260227_142752_992.gif" class="bottom-image">
     </div>
 
-    <!-- लकी ड्रॉ बैनर (10668102) -->
+    <!-- नया एड बैनर 2 (10668102) - बड़ा आकर्षक बॉक्स -->
     <div class="lucky-draw-banner">
         <a href="https://omg10.com/4/10668102" target="_blank" style="text-decoration: none;">
             <div class="wheel">🎰🎲🍀</div>
@@ -1275,8 +1446,8 @@ body.site-visible #mainSite { opacity: 1; }
             <div class="prize-box">
                 <span style="font-size: 4rem;">🎁 आपकी बारी 🎁</span>
             </div>
-            <p style="font-size: 3rem; color: white;">1 क्लिक में जानें क्या जीता!</p>
-            <div style="font-size: 4rem; margin: 1rem 0;">👇👇👇</div>
+            <p style="font-size: 3.5rem; color: white;">1 क्लिक में जानें क्या जीता!</p>
+            <div style="font-size: 5rem; margin: 1rem 0;">👇👇👇</div>
         </a>
     </div>
 
@@ -1291,14 +1462,14 @@ body.site-visible #mainSite { opacity: 1; }
         <img src="https://uploads.onecompiler.io/44eucr92b/44eucrb95/GIF_20260227_133114_961.gif" class="bottom-image">
     </div>
 
-    <!-- कैश ब्लास्ट बैनर (10668101) -->
+    <!-- नया एड बैनर 3 (10668101) - बड़ा आकर्षक बॉक्स -->
     <div class="cash-blast-banner">
         <a href="https://omg10.com/4/10668101" target="_blank" style="text-decoration: none;">
             <marquee behavior="alternate" scrollamount="8">
                 <span style="font-size: 3.5rem;">🔥 कैश ब्लास्ट ऑफर 🔥</span>
             </marquee>
             <div class="cash-amount">💰 ₹5000 का गिफ्ट 💰</div>
-            <p style="font-size: 3rem; color: white;">हर 10वें क्लिक पर डबल रिवॉर्ड!</p>
+            <p style="font-size: 3.5rem; color: white;">हर 10वें क्लिक पर डबल रिवॉर्ड!</p>
             <button class="claim-btn">⚡ अभी पाएं ⚡</button>
         </a>
     </div>
@@ -1314,7 +1485,7 @@ body.site-visible #mainSite { opacity: 1; }
         <img src="https://uploads.onecompiler.io/43fcd56ek/44eucj7bj/GIF_20260227_142604_859.gif" class="bottom-image">
     </div>
 
-    <!-- रोलिंग ऑफर बैनर (10668099) -->
+    <!-- नया एड बैनर 4 (10668099) - रोलिंग बैनर -->
     <div class="rolling-offer-banner">
         <a href="https://omg10.com/4/10668099" target="_blank" style="text-decoration: none;">
             <marquee direction="left" scrollamount="10">
@@ -1337,13 +1508,13 @@ body.site-visible #mainSite { opacity: 1; }
         <img src="https://uploads.onecompiler.io/44ewsfx3x/44exp7b45/GIF_20260228_164841_559.gif" class="bottom-image">
     </div>
 
-    <!-- सुपर गिफ्ट बैनर (10668117) -->
+    <!-- नया एड बैनर 5 (10668117) - बड़ा आकर्षक बॉक्स -->
     <div class="super-gift-banner">
         <a href="https://omg10.com/4/10668117" target="_blank" style="text-decoration: none;">
             <h3>🏆 मेगा होली जैकपॉट 🏆</h3>
             <p>₹1,00,000 का इनाम बांटा जा रहा है!</p>
             <div class="count">🎯 50 लोग पहले ही जीत चुके 🎯</div>
-            <div style="font-size: 6rem; margin: 2rem 0;">💎💎💎</div>
+            <div style="font-size: 7rem; margin: 2rem 0;">💎💎💎</div>
             <button>जैकपॉट चेक करें 👆</button>
         </a>
     </div>
@@ -1358,8 +1529,7 @@ body.site-visible #mainSite { opacity: 1; }
         <img src="https://uploads.onecompiler.io/43fcd56ek/44etxpx4h/GIF_20260227_111704_797.gif" class="bottom-image">
         <img src="https://uploads.onecompiler.io/44ewsfx3x/44exp7b45/GIF_20260228_164841_559.gif" class="bottom-image">
     </div>
- 
-<div id="container-ad6b84cb1eb8f348b0b4334a9979b6dd"></div>
+
     <!-- बड़ी इमेज 7 -->
     <div class="big-image-card">
         <img src="https://uploads.onecompiler.io/44eucr92b/44eucrb95/GIF_20260227_133114_961.gif" class="big-image" alt="Holi GIF 7">
@@ -1371,7 +1541,7 @@ body.site-visible #mainSite { opacity: 1; }
         <img src="https://uploads.onecompiler.io/44ewsfx3x/44exp7b45/GIF_20260228_164841_559.gif" class="bottom-image">
     </div>
 
-    <!-- मिनी आकर्षक बैनर (10665737) -->
+    <!-- नया एड बैनर 6 (10665737) - मिनी बैनर -->
     <div class="mini-attractive-banner">
         <a href="https://omg10.com/4/10665737" target="_blank" style="text-decoration: none;">
             <p>
@@ -1437,7 +1607,7 @@ body.site-visible #mainSite { opacity: 1; }
         <img src="https://uploads.onecompiler.io/44eucr92b/44eucrb95/GIF_20260227_133114_961.gif" class="bottom-image">
     </div>
 
-    <!-- एड 2 -->
+    <!-- एड 2 (पुराना) -->
     <div class="ad-container">
         <ins class="adsbygoogle"
              style="display:block"
@@ -1451,7 +1621,7 @@ body.site-visible #mainSite { opacity: 1; }
     <div class="holi-message-card" id="holiMessageCard">
         <div class="message-icon">🎨</div>
         <div class="message-title" id="messageTitle">होली की हार्दिक शुभकामनाएं</div>
-        <div class="message-content" id="messageContent">खुशियों से भर जाए आपकी झोली<br>आप सभी को मेरी तरफ से...<br>HAPPY HOLI IN ADVANCE</div>
+        <div class="message-content" id="messageContent">खुशियों से भर जाए आपकी झोली<br>आप सभी को मेरी तरफ से...<br>HAPPY HOLI</div>
         <div class="message-footer" id="messageFooter">🌈🎨💧</div>
     </div>
     <div class="bottom-images">
@@ -1499,7 +1669,7 @@ body.site-visible #mainSite { opacity: 1; }
         <img src="https://uploads.onecompiler.io/44ewsfx3x/44exp7b45/GIF_20260228_164841_559.gif" class="bottom-image">
     </div>
 
-    <!-- एड 3 -->
+    <!-- एड 3 (पुराना) -->
     <div class="ad-container">
         <ins class="adsbygoogle"
              style="display:block"
@@ -1509,7 +1679,7 @@ body.site-visible #mainSite { opacity: 1; }
         <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
     </div>
 
-    <!-- ===== UPI डोनेशन सेक्शन ===== -->
+    <!-- ===== UPI डोनेशन सेक्शन (UPI लिंक सुधारा गया) ===== -->
     <div class="upi-donation-card">
         <div class="upi-title">🙏 आपका प्यार ही हमारी ताकत</div>
         <div class="upi-message">
@@ -1526,7 +1696,7 @@ body.site-visible #mainSite { opacity: 1; }
             <div class="upi-app-icon" onclick="openUPIApp('amazonpay')"><i class="fab fa-amazon-pay"></i></div>
         </div>
         
-        <!-- UPI बटन -->
+        <!-- UPI बटन (सुधारे गए) -->
         <div class="upi-buttons">
             <button class="upi-pay-btn" onclick="payViaUPI('renudevi9984@ybl', '11')">
                 <i class="fas fa-heart"></i> ₹11 सपोर्ट
@@ -1555,26 +1725,41 @@ body.site-visible #mainSite { opacity: 1; }
             <i class="fas fa-qrcode"></i> renudevi9984@ybl
         </div>
         
-        <!-- UPI QR कोड -->
-        <div class="upi-qr-container" onclick="scanQRCode()">
-            <p style="font-size:2.5rem; margin-bottom:1.5rem; color:#9b1f3f;">📱 QR कोड स्कैन करें</p>
-            <img src="https://api.qrserver.com/v1/create-qr-code/?size=350x350&data=upi://pay?pa=renudevi9984@ybl&pn=Renuka%20Devi&cu=INR" class="upi-qr-img" alt="UPI QR Code">
+        <!-- लड़की की तस्वीर और QR कोड -->
+        <div style="overflow: hidden; margin: 3rem 0;">
+            <!-- लड़की की तस्वीर -->
+            <img src="https://uploads.onecompiler.io/44ewsfx3x/44f3ezrc7/grok_image_1772385770473.jpg" class="upi-girl-image" alt="Support Girl">
+            
+            <!-- QR कोड -->
+            <div class="upi-qr-container" onclick="scanQRCode()">
+                <p style="font-size:2.5rem; margin-bottom:1.5rem; color:#8B0000;">📱 QR कोड स्कैन करें</p>
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=350x350&data=upi://pay?pa=renudevi9984@ybl&pn=Renuka%20Devi&cu=INR" class="upi-qr-img" alt="UPI QR Code">
+            </div>
         </div>
         
-        <div class="upi-note">
+        <div class="upi-note" style="clear: both;">
             <i class="fas fa-shield-alt"></i> 100% सुरक्षित भुगतान
         </div>
     </div>
 
-    <!-- नीचे वाला शेयर सेक्शन -->
+    <!-- नीचे वाला संयुक्त शेयर सेक्शन -->
     <div class="share-card-bottom">
         <h2 style="font-size:3.5rem;">📲 अपना नाम लिखें और शेयर करें</h2>
-        <input class="name-input-bottom" type="text" id="userNameInput" placeholder="आपका नाम"><br>
-        <button class="share-action-btn" onclick="createShareLink()">लिंक बनाएं</button>
-        <div class="share-link-container" id="shareLinkDisplay"></div>
-        <button class="whatsapp-share-btn-bottom" id="whatsappShareBtn">
-            <i class="fab fa-whatsapp"></i> व्हाट्सएप शेयर
-        </button>
+        <input class="name-input-bottom" type="text" id="userNameInputBottom" placeholder="आपका नाम"><br>
+        <div class="bottom-share-buttons">
+            <button class="telegram-share-btn-bottom" id="telegramShareBtnBottom">
+                <i class="fab fa-telegram-plane"></i> टेलीग्राम शेयर
+            </button>
+            <button class="whatsapp-share-btn-bottom" id="whatsappShareBtnBottom">
+                <i class="fab fa-whatsapp"></i> व्हाट्सएप शेयर
+            </button>
+        </div>
+    </div>
+
+    <!-- नेटिव बैनर - सबसे नीचे (Adsterra) -->
+    <div class="native-ad-bottom">
+        <script async="async" data-cfasync="false" src="https://pl28820730.effectivegatecpm.com/ad6b84cb1eb8f348b0b4334a9979b6dd/invoke.js"></script>
+        <div id="container-ad6b84cb1eb8f348b0b4334a9979b6dd"></div>
     </div>
 </div>
 
@@ -1591,7 +1776,7 @@ body.site-visible #mainSite { opacity: 1; }
     </div>
 </div>
 
-<!-- सिंगल जावास्क्रिप्ट (फिक्स्ड व्हाट्सएप शेयर) -->
+<!-- संयुक्त जावास्क्रिप्ट (UPI फंक्शन सुधारे गए) -->
 <script>
 (function() {
     const HOLI_START = new Date('2026-03-04T00:00:00+05:30').getTime();
@@ -1610,18 +1795,17 @@ body.site-visible #mainSite { opacity: 1; }
     // कर्टेन और गाना सेटअप
     const audio = document.getElementById('holiAudio');
     
-    // पेज लोड होते ही गाना प्रीलोड करें
     if (audio) {
         audio.load();
         audio.volume = 0.7;
     }
     
-    // पर्दा खुलने पर गाना चलाएं
     document.getElementById('curtain-center').addEventListener('click', function() {
         document.querySelector('.left').classList.add('open-left');
         document.querySelector('.right').classList.add('open-right');
         
-        // गाना शुरू से चलाएं
+        document.querySelector('.corner-ads').style.display = 'none';
+        
         if (audio) {
             audio.currentTime = 0;
             audio.play().catch(e => console.log('गाना चलाने में दिक्कत', e));
@@ -1630,8 +1814,66 @@ body.site-visible #mainSite { opacity: 1; }
         setTimeout(() => {
             document.getElementById('curtain').style.display = 'none';
             document.body.classList.add('site-visible');
+            startWelcomeEffect();
         }, 300);
     });
+
+    function startWelcomeEffect() {
+        const canvas = document.getElementById('welcomeCanvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        canvas.classList.add('active');
+        
+        let particles = [];
+        const particleCount = 200;
+        
+        for (let i = 0; i < particleCount; i++) {
+            particles.push({
+                x: Math.random() * canvas.width,
+                y: Math.random() * canvas.height,
+                vx: (Math.random() - 0.5) * 8,
+                vy: (Math.random() - 0.5) * 8,
+                size: Math.random() * 10 + 5,
+                color: `hsl(${Math.random() * 360}, 100%, 50%)`,
+                life: 1
+            });
+        }
+        
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            let alive = false;
+            for (let p of particles) {
+                if (p.life <= 0) continue;
+                alive = true;
+                
+                p.x += p.vx;
+                p.y += p.vy;
+                p.vy += 0.2;
+                p.life -= 0.005;
+                
+                ctx.globalAlpha = p.life;
+                ctx.fillStyle = p.color;
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.fillRect(p.x - p.size/2, p.y - p.size/2, p.size, p.size);
+            }
+            
+            if (alive) {
+                requestAnimationFrame(animate);
+            } else {
+                canvas.classList.remove('active');
+            }
+        }
+        
+        animate();
+        
+        setTimeout(() => {
+            canvas.classList.remove('active');
+        }, 3000);
+    }
 
     // टाइमर और मैसेज अपडेट
     const statusTitle = document.getElementById('statusTitle');
@@ -1653,7 +1895,7 @@ body.site-visible #mainSite { opacity: 1; }
             statusTitle.innerHTML = '⏳ होली आने में';
             
             messageTitle.innerHTML = 'होली की हार्दिक शुभकामनाएं';
-            messageContent.innerHTML = 'खुशियों से भर जाए आपकी झोली<br>आप सभी को मेरी तरफ से...<br>HAPPY HOLI IN ADVANCE';
+            messageContent.innerHTML = 'खुशियों से भर जाए आपकी झोली<br>आप सभी को मेरी तरफ से...<br>HAPPY HOLI';
             messageFooter.innerHTML = '🌈🎨💧';
         } 
         else if (now < HOLI_END) {
@@ -1676,7 +1918,6 @@ body.site-visible #mainSite { opacity: 1; }
     setInterval(updateTimerAndMessage, 1000); 
     updateTimerAndMessage();
 
-    // गिफ्ट मोडल
     window.openGiftModal = function() {
         document.getElementById('giftModal').style.display = 'flex';
         for (let i=0; i<25; i++) setTimeout(() => {
@@ -1703,83 +1944,102 @@ body.site-visible #mainSite { opacity: 1; }
         document.getElementById('giftModal').style.display = 'none'; 
     };
 
-    // शेयर फंक्शन - फिक्स्ड (नाम अब सही से जाएगा)
-    window.createShareLink = function() {
-        let n = document.getElementById('userNameInput').value.trim();
-        if (!n) { 
-            alert('नाम लिखें'); 
-            return; 
-        }
-        // यहाँ senderNameDisplay भी अपडेट करें
-        document.getElementById('senderNameDisplay').innerText = n;
-        
-        let link = window.location.origin + window.location.pathname + '?name=' + encodeURIComponent(n);
-        document.getElementById('shareLinkDisplay').innerHTML = 
-            `<span style="font-size:2rem; word-break:break-all; background:white; padding:1rem 2rem; border-radius:60px; border:2px solid #ec4e7a;">${link}</span>`;
-        
-        // व्हाट्सएप बटन अपडेट करें
-        document.getElementById('whatsappShareBtn').onclick = function() {
-            window.open(`https://wa.me/?text=${encodeURIComponent('🌸 होली की हार्दिक शुभकामनाएं! यह मेरा विशिंग पेज है: ' + link)}`, '_blank');
-        };
-        
-        // फ्लोटिंग व्हाट्सएप बटन के लिए भी
-        document.getElementById('floatingShareBtn').onclick = function() {
-            window.open(`https://wa.me/?text=${encodeURIComponent('🌸 होली की हार्दिक शुभकामनाएं! यह मेरा विशिंग पेज है: ' + link)}`, '_blank');
-        };
-        
-        alert('लिंक बन गया है! अब व्हाट्सएप बटन दबाएं');
-    };
+    // ---------- संयुक्त शेयर फंक्शन ----------
     
-    // फ्लोटिंग व्हाट्सएप बटन
-    document.getElementById('floatingWhatsappBtn').addEventListener('click', function() {
-        let name = document.getElementById('floatingNameInput').value.trim();
-        let link = window.location.href;
-        if (name) {
-            link = window.location.origin + window.location.pathname + '?name=' + encodeURIComponent(name);
-            // senderNameDisplay भी अपडेट करें
-            document.getElementById('senderNameDisplay').innerText = name;
+    const floatingNameInput = document.getElementById('floatingNameInput');
+    const floatingWhatsappBtn = document.getElementById('floatingWhatsappBtn');
+    const floatingTelegramBtn = document.getElementById('floatingTelegramBtn');
+    const userNameInputBottom = document.getElementById('userNameInputBottom');
+    const whatsappShareBtnBottom = document.getElementById('whatsappShareBtnBottom');
+    const telegramShareBtnBottom = document.getElementById('telegramShareBtnBottom');
+
+    function getShareLink(name) {
+        if (name && name.trim() !== '') {
+            return window.location.origin + window.location.pathname + '?name=' + encodeURIComponent(name.trim());
         }
-        window.open(`https://wa.me/?text=${encodeURIComponent('🌸 होली की हार्दिक शुभकामनाएं! यह मेरा विशिंग पेज है: ' + link)}`, '_blank');
-    });
-    
-    document.getElementById('floatingShareBtn').addEventListener('click', function() {
-        let name = document.getElementById('floatingNameInput').value.trim();
-        let link = window.location.href;
-        if (name) {
-            link = window.location.origin + window.location.pathname + '?name=' + encodeURIComponent(name);
-            document.getElementById('senderNameDisplay').innerText = name;
-        }
-        window.open(`https://wa.me/?text=${encodeURIComponent('🌸 होली की हार्दिक शुभकामनाएं! यह मेरा विशिंग पेज है: ' + link)}`, '_blank');
-    });
-    
-    // डिफॉल्ट व्हाट्सएप शेयर
-    document.getElementById('whatsappShareBtn').addEventListener('click', function() {
-        let link = window.location.href;
-        window.open(`https://wa.me/?text=${encodeURIComponent('🌸 होली की हार्दिक शुभकामनाएं! देखिए यह खूबसूरत विशिंग पेज: ' + link)}`, '_blank');
+        return window.location.href;
+    }
+
+    const shareMessage = `🌸🌈✨ *होली 2026 की हार्दिक शुभकामनाएं!* ✨🌈🌸
+
+देखिए मेरा खास होली विशिंग पेज:
+➡️ रंगों की बौछार
+➡️ जबरदस्त शायरी
+➡️ जादुई इफेक्ट्स
+
+आप भी अपने नाम के साथ भेजें यह पेज अपनों को और बनाएं उनकी होली खास! ❤️`;
+
+    function shareOnWhatsApp(link) {
+        window.open(`https://wa.me/?text=${encodeURIComponent(shareMessage + '\n\n🔗 लिंक: ' + link)}`, '_blank');
+    }
+
+    function shareOnTelegram(link) {
+        window.open(`https://t.me/share/url?url=${encodeURIComponent(link)}&text=${encodeURIComponent(shareMessage)}`, '_blank');
+    }
+
+    floatingWhatsappBtn.addEventListener('click', function() {
+        let name = floatingNameInput.value.trim();
+        let link = getShareLink(name);
+        if (name) senderNameDisplay.innerText = name;
+        shareOnWhatsApp(link);
     });
 
-    // UPI पेमेंट फंक्शन
+    floatingTelegramBtn.addEventListener('click', function() {
+        let name = floatingNameInput.value.trim();
+        let link = getShareLink(name);
+        if (name) senderNameDisplay.innerText = name;
+        shareOnTelegram(link);
+    });
+
+    whatsappShareBtnBottom.addEventListener('click', function() {
+        let name = userNameInputBottom.value.trim();
+        let link = getShareLink(name);
+        if (name) senderNameDisplay.innerText = name;
+        shareOnWhatsApp(link);
+    });
+
+    telegramShareBtnBottom.addEventListener('click', function() {
+        let name = userNameInputBottom.value.trim();
+        let link = getShareLink(name);
+        if (name) senderNameDisplay.innerText = name;
+        shareOnTelegram(link);
+    });
+
+    userNameInputBottom.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            let name = userNameInputBottom.value.trim();
+            let link = getShareLink(name);
+            if (name) senderNameDisplay.innerText = name;
+            shareOnWhatsApp(link);
+        }
+    });
+
+    // ===== सुधारा गया UPI पेमेंट फंक्शन =====
     window.payViaUPI = function(upiId, amount) {
         const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
         const yourName = encodeURIComponent("Renuka Devi");
         const note = encodeURIComponent("होली 2026 सपोर्ट");
+        // अधिक सार्वभौमिक UPI लिं्क
         const upiUrl = `upi://pay?pa=${upiId}&pn=${yourName}&am=${amount}&cu=INR&tn=${note}`;
         
         if (isMobile) {
-            if (confirm("UPI ऐप खोलने की अनुमति दें?")) {
-                window.location.href = upiUrl;
-                setTimeout(function() {
-                    if (!document.hidden) {
-                        alert("कृपया अपना UPI ऐप (Google Pay, PhonePe, Paytm) इंस्टॉल करें");
+            // सीधे UPI लिंक खोलने की कोशिश करें
+            window.location.href = upiUrl;
+            
+            // फॉलबैक के तौर पर अलग-अलग ऐप्स के लिए इंटेंट
+            setTimeout(function() {
+                if (!document.hidden) {
+                    // अगर UPI ऐप नहीं खुला तो यूजर को मैन्युअली QR स्कैन करने का विकल्प दें
+                    if (confirm("UPI ऐप नहीं खुल रहा है। क्या आप QR कोड स्कैन करना चाहेंगे?")) {
+                        scanQRCode();
                     }
-                }, 2000);
-            }
+                }
+            }, 2000);
         } else {
             alert("कृपया QR कोड स्कैन करें या मोबाइल से खोलें");
         }
     };
 
-    // कस्टम अमाउंट पेमेंट
     window.payCustomAmount = function() {
         const amount = document.getElementById('customAmount').value;
         if (!amount || amount < 1) {
@@ -1789,19 +2049,16 @@ body.site-visible #mainSite { opacity: 1; }
         payViaUPI('renudevi9984@ybl', amount);
     };
 
-    // QR कोड स्कैन फंक्शन
     window.scanQRCode = function() {
         const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
         if (isMobile) {
-            if (confirm("UPI ऐप खोलकर QR कोड स्कैन करें?")) {
-                window.location.href = `upi://pay?pa=renudevi9984@ybl&pn=Renuka%20Devi&cu=INR`;
-            }
+            // कैमरा खोलकर QR स्कैन करने के लिए (यह डिवाइस पर निर्भर करता है)
+            window.location.href = `upi://pay?pa=renudevi9984@ybl&pn=Renuka%20Devi&cu=INR`;
         } else {
             alert("QR कोड डाउनलोड करने के लिए राइट क्लिक करें और सेव करें");
         }
     };
 
-    // UPI ऐप खोलने का फंक्शन
     window.openUPIApp = function(app) {
         const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
         if (!isMobile) {
@@ -1812,6 +2069,7 @@ body.site-visible #mainSite { opacity: 1; }
         let appUrl = '';
         const upiData = `pa=renudevi9984@ybl&pn=Renuka%20Devi&cu=INR`;
         
+        // विभिन्न UPI ऐप्स के लिए यूआरएल स्कीम
         switch(app) {
             case 'gpay':
                 appUrl = `tez://upi/pay?${upiData}`;
@@ -1829,59 +2087,49 @@ body.site-visible #mainSite { opacity: 1; }
                 appUrl = `upi://pay?${upiData}`;
         }
         
-        if (confirm(`${app} ऐप खोलने की अनुमति दें?`)) {
-            window.location.href = appUrl;
-        }
-    };
-
-    // इमोजी रनर
-    const antC = document.getElementById('antContainer');
-    const emojiList = ['🔫','🌈','🧴','🍬','💦','🌸','🎨','🪅','🎊','🥳','🧁','🍭','💧','🎈'];
-    
-    for (let i=0; i<25; i++) { 
-        let a = document.createElement('div'); 
-        a.className = 'ant-emoji'; 
-        a.textContent = emojiList[i % emojiList.length]; 
-        antC.appendChild(a); 
-    }
-    
-    function moveAnts() {
-        let ants = document.querySelectorAll('.ant-emoji');
-        let w = window.innerWidth;
-        let h = window.innerHeight;
-        let perimeter = 2 * (w + h);
-        let time = Date.now() / 900;
-        let margin = 10;
+        // ऐप खोलने की कोशिश करें
+        window.location.href = appUrl;
         
-        ants.forEach((ant, i) => { 
-            let offset = (i * 0.03 * perimeter) % perimeter;
-            let pos = (time * 40 + offset) % perimeter;
-            let x, y;
-            
-            if (pos < w) { x = pos; y = margin; }
-            else if (pos < w + h) { x = w - margin; y = pos - w; }
-            else if (pos < 2 * w + h) { x = 2 * w + h - pos; y = h - margin; }
-            else { x = margin; y = perimeter - pos; }
-            
-            ant.style.left = x + 'px';
-            ant.style.top = y + 'px';
-        });
-        requestAnimationFrame(moveAnts);
-    }
-    moveAnts();
-
-    document.getElementById('userNameInput').addEventListener('keypress', function(e) {
-        if (e.key === 'Enter') {
-            createShareLink();
-        }
-    });
+        // फॉलबैक
+        setTimeout(function() {
+            if (!document.hidden) {
+                if (confirm(`${app} ऐप नहीं खुल रहा है। क्या आप डिफ़ॉल्ट UPI ऐप से खोलना चाहेंगे?`)) {
+                    window.location.href = `upi://pay?${upiData}`;
+                }
+            }
+        }, 2000);
+    };
 
     try {
         (adsbygoogle = window.adsbygoogle || []).push({});
     } catch (e) {}
 })();
 </script>
-<!-- Adsterra Social Bar - Body के अंत में -->
-<script src="https://pl28820096.effectivegatecpm.com/cb/19/e8/cb19e87a1e80f7b94d4d0b977220cdec.js"></script>
+<!-- Adsterra Social Bar -->
+<script src="https://pl28820096.effectivegatecpm.com/cb/19/e8/cb19e87a1e80f7b94d4b0b977220cdec.js"></script>
+
+<!-- नई एड स्क्रिप्ट 3 (6214683eb6fbe65084d31f69f8b1a166) - बड़ा एड -->
+<script>
+  atOptions = {
+    'key' : '6214683eb6fbe65084d31f69f8b1a166',
+    'format' : 'iframe',
+    'height' : 600,
+    'width' : 160,
+    'params' : {}
+  };
+</script>
+<script src="https://www.highperformanceformat.com/6214683eb6fbe65084d31f69f8b1a166/invoke.js"></script>
+
+<!-- नई एड स्क्रिप्ट 4 (a588af03...) - छोटा एड -->
+<script>
+  atOptions = {
+    'key' : 'a588af03cb478e73230690b7942d3a89',
+    'format' : 'iframe',
+    'height' : 90,
+    'width' : 728,
+    'params' : {}
+  };
+</script>
+<script src="https://www.highperformanceformat.com/a588af03cb478e73230690b7942d3a89/invoke.js"></script>
 </body>
 </html>
